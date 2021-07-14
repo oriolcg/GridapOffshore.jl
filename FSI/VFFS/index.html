@@ -1,0 +1,270 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/GridapOffshore.jl/libs/katex/katex.min.css"> <link rel=stylesheet  href="/GridapOffshore.jl/libs/highlight/github.min.css"> <link href="/GridapOffshore.jl/css/franklin.css" rel=stylesheet > <link href="/GridapOffshore.jl/css/vela.css" rel=stylesheet > <script src="/GridapOffshore.jl/libs/vela/jquery.min.js"></script> <link rel=icon  href="/GridapOffshore.jl/assets/favicon.png"> <title>Franklin Example | Vela</title> <div class="main-nav slideout-menu slideout-menu-left" id=menu > <div class=flex-container > <span class=sidebar-brand > <h3 style='font-size: 25px'>Gridap Offshore</h3> </span> </div> <nav class=sidebar-nav > <ul class=metismenu  id=metismenu  > <li><a href="/GridapOffshore.jl/index.html">Home</a> <li><a href="" class=has-arrow >Flow problems</a> <ul> <li><a href="/GridapOffshore.jl/steady_navier_stokes/">Steady Navier-Stokes</a> <li><a href="/GridapOffshore.jl/transient_navier_stokes/">Transient Navier-Stokes</a> </ul> <li><a href="" class=has-arrow >Structure problems</a> <li><a href="" class=has-arrow >FSI problems</a> <ul> <li><a href="/GridapOffshore.jl/steady_fsi/">Steady elastic flag</a> <li><a href="/GridapOffshore.jl/transient_fsi/">Transient elastic flag</a> <li><a href="/GridapOffshore.jl/FSI/VFFS/">Very Flexible Floating Structure</a> </ul> </ul> </nav> </div> <main id=panel  class="slidout-panel slideout-panel-left"> <div class="toggle-button hamburger hamburger--spin"> <div class=hamburger-box > <div class=hamburger-inner ></div> </div> </div> <h1 class="page title">Very Flexible Floating Structure &#40;VFFS&#41;</h1> <hr> <div class=franklin-content ><h1 id=very_flexible_floating_structure_vffs ><a href="#very_flexible_floating_structure_vffs" class=header-anchor >Very Flexible Floating Structure &#40;VFFS&#41;</a></h1> <p>This tutorial shows how a Fluid Structure Interaction &#40;FSI&#41; in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.</p> <p>&lt;img style&#61;&quot;display: block;max-width: 100&#37;;height: auto;margin: auto;float: none&#33;important;&quot; src&#61;&quot;viridis_3D.png&quot; alt&#61;&quot;3D model&quot; width&#61;&quot;75&#37;&quot; /&gt;</p> <p>&lt;center&gt;&lt;i&gt;3D model&lt;/i&gt;&lt;/center&gt;</p> <h2 id=mathematics ><a href="#mathematics" class=header-anchor >Mathematics</a></h2> <p>First of all, let&#39;s dive in to the mathematics behind the problem. Potential flow is based on the principle that the velocity field can be described by the spatial derivatives of a scalar function, this is called the potential function. Moreover, the fluid is considered to be incom­pressible. This consideration implies that the divergence of the velocity is equal to zero. The potential function then satisfies the Laplace equation:</p> <pre><code class=language-math >\left\&#123;\begin&#123;array&#125;&#123;l&#125;
+\nabla \cdot \vec&#123;u&#125;&#61;0 \\
+\nabla \phi&#61;\vec&#123;u&#125;
+\end&#123;array&#125; \Leftrightarrow \nabla \cdot&#40;\nabla \phi&#41;&#61;\Delta \phi&#61;0 \quad\right. \text &#123; in &#125; \quad \Omega</code></pre> <p>Where \(\Omega\) denotes the 2D domain.</p> <p>Now it is time to set the boundary conditions of the domain. In this case, three different boundaries need to be applied:</p> <ul> <li><p>The bottom boundary</p> <li><p>The free surface boundary</p> <li><p>The structure boundary</p> </ul> <h3 id=bottom_boundary ><a href="#bottom_boundary" class=header-anchor >Bottom boundary</a></h3> <p>The bottom boundary &#40;also called the sea bed boundary&#41; states that the boundary is impermeable and given as:</p> \[ \nabla \phi \cdot \vec{n}=0 \quad \text { on } \quad \Gamma_{L} \cup \Gamma_{b t m} \cup \Gamma_{R} \quad \text { bottom b.c. } \] <p>In this model, not only the bottom of the domain &#40;\(\Gamma_{btm}\)&#41; is impermeable, but also the left &#40;\(\Gamma_L\)&#41; and right &#40;\(\Gamma_R\)&#41; hand side of the domain &#40;see figure below&#41;.</p> <p>&lt;img style&#61;&quot;display: block;max-width: 100&#37;;height: auto;margin: auto;float: none&#33;important;&quot; src&#61;&quot;boundary_conditions-02.png&quot; alt&#61;&quot;domain&quot; width&#61;&quot;75&#37;&quot; /&gt;</p> <p>The top boundary, however, is not impermeable, but is the free surface boundary &#40;\(\Gamma_{fs}\)&#41;. The fluid is able to move freely up and down, but mustn&#39;t leave the domain. Two conditions need to be applied here:</p> <ul> <li><p>The dynamic boundary condition</p> <li><p>The kinematic boundary condition</p> </ul> <h3 id=dynamic_boundary_condition ><a href="#dynamic_boundary_condition" class=header-anchor >Dynamic boundary condition</a></h3> <p>The dynamic free surface boundary condition states that the pressure above the free surface is constant and equal to zero. Using Bernoulli’s equation in the lin­earised form and assuming that there is no y­-direction &#40;since the model is only 2D&#41;, the boundary condition is given as:</p> \[ \frac{\delta \phi}{\delta t}+g \eta=0 \quad \text { on } \quad \Gamma_{f s} \quad \text { dynamic free surface b.c. } \] <p>Where \(g\) is the gravity constant and \(\eta\) is the surface elevation. With this boundary condition the formula of the potential flow can be derived and is equal to:</p> \[ \phi=\frac{\xi_{i} g}{\omega} \cdot \frac{\cosh \left(k_{i}(d+z)\right)}{\cosh \left(k_{i} d\right)} \cdot \sin \left(k_{i} x-\omega t\right) \] <p>Where \(\xi_i\) , \(\omega\) and \(k_i\) are the amplitude, the angular frequency and the wave number of the incident wave, respectively and \(d\) the water depth.</p> <h3 id=kinematic_boundary_condition ><a href="#kinematic_boundary_condition" class=header-anchor >Kinematic boundary condition</a></h3> <p>Finally, the third boundary condition is the kinematic free surface boundary condition which describes that the vertical velocity of the free surface has to be equal to the vertical motion of the flow and is given as follows:</p> \[ \frac{\delta \phi}{\delta z}=\frac{\delta \eta}{\delta t} \quad \text { on } \quad \Gamma_{f s} \quad \text { kinematic free surface b.c. } \] <h3 id=cauchy-poisson_condition ><a href="#cauchy-poisson_condition" class=header-anchor >Cauchy-Poisson condition</a></h3> <p>Using this boundary condition the wave number can be related to the wave frequency. By differenti­ating the dynamic free surface boundary condition and inserting the kinematic free surface boundary condition one obtains the Cauchy-­Poisson condition:</p> \[ \frac{\delta \phi}{\delta z}+\frac{1}{g} \frac{\delta^{2} \phi}{\delta t^{2}}=0 \] <p>Substituting the potential function into the Cauchy-Poisson equation gives the dispersion relation:</p> \[ \omega^{2}=g k_{i} \tanh \left(k_{i} d\right) \] <p>Using these equation, one is able to establish the free surface and the fluid domain can be modelled. However, we are interested in a fluid structure interaction, which means that there should also be a boundary condition at the location of the floating structure &#40;\(\Gamma_b\)&#41;. This is done by imposing the Dynamic Euler-Bernoulli beam on a slice of the free surface.</p> <h3 id=dynamic_euler-bernoulli_beam ><a href="#dynamic_euler-bernoulli_beam" class=header-anchor >Dynamic Euler-Bernoulli beam</a></h3> <p>The dynamic Euler-Bernoulli beam is a one-dimensional equation that is valid if the loads are purely lateral and the deflections remain small. The general form of the Euler-Bernoulli beam describes a relation of the deflection of the beam &#40;\(w\)&#41; and an external force &#40;\(f(t)\)&#41; as function of time:</p> \[ E I \frac{\delta^{4} w}{\delta x^{4}}=-\mu \frac{\delta^{2} w}{\delta t^{2}}+f(x) \] <p>Where \(EI\) is the bending stiffness and \(\mu\) is the mass per unit length.</p> <p>Regarding the boundary conditions, the kinematic b.c. remains the same as for the free surface. However, the dynamic boundary condition changes to a non-zero solution and is multiplied by the fluid density \(\rho_w\):</p> \[ -\rho_{w} \frac{\delta \phi}{\delta t}-\rho_{w} g \eta=p \] <p>The pressure \(p\) is equal to the external force of the Euler-Bernoulli beam:</p> \[ p=\rho_{b} h \frac{\delta^{2} \eta}{\delta t^{2}}+\frac{E I}{B} \frac{\delta^{4} \eta}{\delta x^{4}} \] <p>Where \(\mu\) is equal to the product of the structure density \(\rho_b\) and the thickness of the structure \(h\). The bending stiffness has been divided by the width &#40;\(B\)&#41; of the structure, as the model is only two-dimensional and the deflection \(w\) has been replaced by the surface elevation \(\eta\). Rewriting this into one equation results in the altered dynamic boundary condition:</p> \[ \rho_{b} h \frac{\delta^{2} \eta}{\delta t^{2}}+\frac{E I}{B} \frac{\delta^{4} \eta}{\delta x^{4}}+\rho_{w} \frac{\delta \phi}{\delta t}+\rho_{w} g \eta=0 \quad \text { on } \quad \Gamma_b \] <p>Rewriting this equation and inserting the same governing kinematic free surface boundary condition results in an altered Cauchy­-Poisson condition with an added factor; three terms in between brackets:</p> \[ \left(\frac{\rho_{b} h}{\rho_{w} g} \frac{\delta^{2} \eta}{\delta t^{2}}+\frac{E I}{\rho_{w} g B} \frac{\delta^{4} \eta}{\delta x^{4}}+1\right) g \frac{\delta \phi}{\delta z}=-\frac{\delta^{2} \phi}{\delta t^{2}} \] <p>Assuming that the solution of the free surface elevation is wave:</p> \[ \eta = \xi_b \cos{(k_b x - \omega t)} \] <p>With \(\xi_b\) and \(k_b\) the amplitude and the wave number of the hydroelastic wave, respectively. Its second derivative in time and fourth derivative in space are given as:</p> \[ \begin{array}{l} \eta_{t t}=-\omega^{2} \xi_{b} \cos \left(k_{b} x-\omega t\right) \\ \eta_{x x x x}=k_{b}^{4} \xi_{b} \cos \left(k_{b} x-\omega t\right) \end{array} \] <p>Inserting these wave terms and assuming initial conditions &#40;\(x = 0, t = 0\)&#41; the equation is given as:</p> \[ \left(-\frac{\omega^{2} \rho_{b} h}{\rho_{w} g}+\frac{k_{b}^{4} E I}{\rho_{w} g B}+1\right) g \frac{\delta \phi}{\delta z}=-\frac{\delta^{2} \phi}{\delta t^{2}} \] <h3 id=damping_zone ><a href="#damping_zone" class=header-anchor >Damping zone</a></h3> <p>At the end of the domain the wave energy should be dissipated to prevent wave reflection. This is done by adding a viscosity term to the set of equations. There are several ways to achieve this, but the most effective way is to use a method by <a href="http://dx.doi.org/10.1016/j.oceaneng.2013.10.012">Kim Woo Min</a> who changed the kinematic boundary condition by adding two terms which dissipate the wave energy:</p> \[ \frac{\delta \eta}{\delta t}-\frac{\delta \phi}{\delta z}+\mu_{1} \eta+\frac{\mu_{2}}{g} \phi=0 \quad \text { kinematic b.c. damping zone} \] <p>Where \(\mu_1\) and \(\mu_2\) are damping coefficients that follow from the iteratively chosen \(\mu_0\), and are dependent on each other to ensure that no dispersion occurs:</p> \[ \begin{array}{l} \mu_{1}(x)=\mu_{0}\left[1-\cos \left(\frac{\pi}{2}\left(\frac{x-x_{d}}{L_{d}}\right)\right)\right] \\ \mu_{2}=-\frac{\mu_{1}^{2}}{4} \end{array} \] <p>Where \(x_d\) is starting point of the numerical damping zone and \(L_d\) is the length of the damping zone.</p> <h2 id=numerical_model ><a href="#numerical_model" class=header-anchor >Numerical model</a></h2> <p>As the mathematics behind the model have been shown, it is now time to rewrite the system of equations into the weak formulation and insert them into the numerical model. However, in order to do so, we should first set up the numrical model.</p> <h3 id=wave_parameters ><a href="#wave_parameters" class=header-anchor >Wave parameters</a></h3> <p>Let&#39;s start with initiating a simple regular wave with a period of \(T = 0.5\) s and a steepness of 1/25 with a water depth of \(d = 1\) m. Using the just derived <a href="https://en.wikipedia.org/wiki/Airy_wave_theory">Airy wave theory</a>, the wave parameters can be calculated. The module <code>Roots</code> is used to calculate the root of the function.</p> <pre><code class=language-julia >using Roots
+T &#61; 0.5
+steepness &#61; 1/25
+d &#61; 1
+
+ω &#61; 2*π / T                 # angular frequency
+g &#61; 9.81                    # gravity constant
+f&#40;k&#41; &#61; √&#40;g*k*tanh&#40;k*d&#41;&#41; - ω
+k &#61; abs&#40;find_zero&#40;f, 0.5&#41;&#41;  # wave number
+λ &#61; 2*π / k                 # wavelength
+ξ &#61; λ * steepness / 2       # wave amplitude</code></pre> <h3 id=material_parameters ><a href="#material_parameters" class=header-anchor >Material parameters</a></h3> <p>Next to the wave parameters, the structure also contains several properties, such as a stiffness, a thickness and a density. The fluid density has been set equal to the sea and the VFFS is made of a 0.005 m rubber-like material called <a href="https://en.wikipedia.org/wiki/Neoprene">Neoprene</a>, which is very flexible. The width of the structure has not been taken into account and it is assumed that the cross-section is a rectangle.</p> <pre><code class=language-julia >ρ_w &#61; 1025    # fluid density
+ρ_b &#61; 116     # structure density
+E &#61; 560e3     # Young&#39;s modulus
+h &#61; 0.005     # thickness
+I &#61; h^3 / 12  # moment of inertia
+EI &#61; E * I    # bending stiffness</code></pre> <p>For 3D applications the bending stiffness \(EI\) should be replaced by the flexural rigidity \(D\) and can be calculated as follows:</p> \[ D = \frac{E h^3}{12 (1-\nu^2)} \] <p>Where \(\nu\) is the Poisson&#39;s ratio.</p> <pre><code class=language-julia >ν &#61; 0.4
+D &#61; E * h^3 / &#40;12 * &#40;1-ν^2&#41; &#41;</code></pre> <p>However, this tutorial will focus on a 2D domain, so this will be discarded.</p> <h3 id=domain ><a href="#domain" class=header-anchor >Domain</a></h3> <p>The domain of the model is defined such that the free surface waves can develop and travel a few wavelengths before they reach the structure. The structure must be longer than the incident wavelength in order to be assumed a VFFS. Finally, the waves will leave the structure and are free surface waves again. Before the waves reach the end of the domain the wave energy should be dissipated to prevent wave reflection at the right hand side of the domain &#40;\(\Gamma_R\)&#41; The picture below shows the set-up of the model.</p> <p>&lt;img style&#61;&quot;display: block;max-width: 100&#37;;height: auto;margin: auto;float: none&#33;important;&quot; src&#61;&quot;boundary_conditions-04.png&quot; alt&#61;&quot;domain&quot; width&#61;&quot;75&#37;&quot; /&gt;</p> <p>To define the domain the <code>Gridap</code> module is used and the different zones are specified:</p> <pre><code class=language-julia >using Gridap
+using Gridap.Geometry
+using GridapODEs
+using GridapODEs.TransientFETools
+using GridapODEs.ODETools
+
+Li &#61; 3*λ # length of incident wave zone
+Lb &#61; 5*λ # length of VFFS
+Lo &#61; 3*λ # length of outgoing wave zone
+Ld &#61; 4*λ # length of damping zone
+
+xb₀ &#61; Li        # x-coordinate start VFFS
+xb₁ &#61; Li &#43; Lb   # x-coordinate end VFFS
+x₂ &#61; xb₁ &#43; Lo   # x-coordinate start damping zone
+x₃ &#61; x₂ &#43; Ld    # end of domain
+
+Xmin &#61; 0
+Xmax &#61; x₃
+Zmin &#61; 0
+Zmax &#61; d
+
+domain &#61; &#40;Xmin, Xmax, Zmin, Zmax&#41;</code></pre> <h3 id=damping_zone__2 ><a href="#damping_zone__2" class=header-anchor >Damping zone</a></h3> <p>With these values the formula for the damping zone can be established. It is chosen to use a value of \(\mu_0 = 10\):</p> <pre><code class=language-julia >μ₀ &#61; 10
+μ₁&#40;x::VectorValue&#41; &#61; μ₀*&#40;1.0 - cos&#40;π/2*&#40;x&#91;1&#93;-x₂&#41;/Ld&#41;&#41; * &#40;x&#91;1&#93;&gt;x₂&#41;
+μ₂&#40;x::VectorValue&#41; &#61; -&#40;μ₁&#40;x::VectorValue&#41;^2&#41;/4 * &#40;x&#91;1&#93;&gt;x₂&#41;</code></pre> <h3 id=resolution ><a href="#resolution" class=header-anchor >Resolution</a></h3> <p>To define the resolution of the domain a partition is given. This is the amount of grid cells that the model contains. The resolution in the x-direction should be high, as we are interested in the exact shape of the wave. For the z-direction, however, we are only interested in the top layer near the free surface. It is assumed that the vertical velocity profile goes to zero when it reaches the bottom, so not much is going on as we proceed towards the bottom of the domain. Therefore, the resolution in x-direction is set to 50 cells per wavelength and for the z-direction only 10 cells are which have been unevenly spaced so that the resolution is fine at the free surface, but becomes coarser as we go down. This is done using the argument <code>map</code> in the function <code>CartesianDiscreteModel</code>. The function <code>simplexify</code> is used to change the mesh to an affine reference map, which is necessary to have the mapping work.</p> \[ \begin{array}{cl} z_{i}=d-\frac{d}{2^{i}} & \text { for } \quad i<n_{\text {cells}, z} \\ z_{i}=d & \text { for } \quad i=n_{\text {cells}, z} \end{array} \] <pre><code class=language-julia >meshX &#61; 50
+meshZ &#61; 10
+function f_z&#40;x&#41;
+    if x &#61;&#61; d
+        return d
+    end
+    i &#61; x / &#40;d/meshZ&#41;
+    return d-d/&#40;2^i&#41;
+end
+map&#40;x&#41; &#61; VectorValue&#40;x&#91;1&#93;,f_z&#40;x&#91;2&#93;&#41;&#41;
+Xspan &#61; Int&#40;round&#40;&#40;Xmax - Xmin&#41; / λ&#41;&#41;
+Zspan &#61; Int&#40;round&#40;&#40;Zmax - Zmin&#41; / λ&#41;&#41;
+partition &#61; &#40;Xspan * meshX, Zspan * meshZ&#41;
+model_Ω &#61; simplexify&#40;CartesianDiscreteModel&#40;domain,partition, map&#61;map&#41;&#41;
+Ω &#61; Triangulation&#40;model_Ω&#41;</code></pre> <h3 id=boundaries ><a href="#boundaries" class=header-anchor >Boundaries</a></h3> <p>As the numerical domain <code>model_Ω</code> has been initiated, we wil now define the location of the floating structure using the following function and using a <code>mask</code>:</p> <pre><code class=language-julia >function is_beam&#40;coords&#41;
+    n &#61; length&#40;coords&#41;
+    x &#61; &#40;1/n&#41;*sum&#40;coords&#41;
+    &#40;xb₀ &lt;&#61; x&#91;1&#93; &lt;&#61; xb₁ &#41; * &#40; x&#91;2&#93; ≈ d &#41;
+end
+
+labels &#61; get_face_labeling&#40;model_Ω&#41;
+
+bgface_to_mask &#61; get_face_mask&#40;labels,&#91;3,4,6&#93;,1&#41;
+Γface_to_bgface &#61; findall&#40;bgface_to_mask&#41;
+model_Γ &#61; BoundaryDiscreteModel&#40;Polytope&#123;1&#125;,model_Ω,Γface_to_bgface&#41;
+Γ &#61; Triangulation&#40;model_Γ&#41;
+
+Γface_coords &#61; get_cell_coordinates&#40;Γ&#41;
+Γface_mask &#61; lazy_map&#40;is_beam,Γface_coords&#41;
+Γbface_Γface &#61; findall&#40;Γface_mask&#41;
+Γfface_Γface &#61; findall&#40;&#33;,Γface_mask&#41;
+
+Γb &#61; BoundaryTriangulation&#40;model_Ω,view&#40;Γface_to_bgface,Γbface_Γface&#41;&#41;
+Γf &#61; BoundaryTriangulation&#40;model_Ω,view&#40;Γface_to_bgface,Γfface_Γface&#41;&#41;</code></pre> <p>As well as the other boundaries:</p> <pre><code class=language-julia >add_tag_from_tags&#33;&#40;labels,&quot;bottom&quot;,&#91;1,2,5&#93;&#41;
+add_tag_from_tags&#33;&#40;labels,&quot;inlet&quot;,&#91;7&#93;&#41;
+add_tag_from_tags&#33;&#40;labels,&quot;outlet&quot;,&#91;8&#93;&#41;
+add_tag_from_tags&#33;&#40;labels, &quot;water&quot;, &#91;9&#93;&#41;</code></pre> <p>The inlet of the domain is specified and a vertical velocity profile is imposed which is based on the gradient of the potential function:</p> \[ \frac{\delta \phi}{\delta x} =\omega \xi \frac{\cosh k(z+d)}{\sinh k d} \cos (k x-\omega t - \theta) \] <pre><code class=language-julia >Γin &#61; BoundaryTriangulation&#40;model_Ω, tags &#61; &#91;&quot;inlet&quot;&#93;&#41;
+
+θ &#61; π/2 # phase shift
+function v_inlet&#40;x,t&#41;
+    return &#40;ω * ξ * &#40; cosh&#40; k * &#40;x&#91;2&#93;&#41; &#41; / sinh&#40; k * d &#41; &#41; * cos&#40;k * x&#91;1&#93; - ω * t - θ&#41;&#41;
+end
+
+v_inlet&#40;t::Real&#41; &#61; x -&gt; v_inlet&#40;x,t&#41;</code></pre> <p>Finally, the quadratures are specified for each boundary:</p> <pre><code class=language-julia >order &#61; 2
+dΩ &#61; Measure&#40;Ω,2*order&#41;
+dΓb &#61; Measure&#40;Γb,2*order&#41;
+dΓf &#61; Measure&#40;Γf,2*order&#41;
+dΓin &#61; Measure&#40;Γin,2*order&#41;
+
+Λb &#61; SkeletonTriangulation&#40;model_Γ,Γface_mask&#41;
+nΛb &#61; get_normal_vector&#40;Λb&#41;
+dΛb &#61; Measure&#40;Λb,2*order&#41;
+mean_mask &#61; CellField&#40;mean&#40;CellField&#40;Γface_mask,Γ&#41;&#41;,Λb&#41;</code></pre> <h3 id=finite_element_spaces ><a href="#finite_element_spaces" class=header-anchor >Finite Element spaces</a></h3> <p>As the numerical domain has been set and the boundaries have been defined, the test spaces can be constructed. For this type of problem, two spaces will be built; one for the internal domain <code>model_Ω</code> and one for the free surface <code>model_Γ</code>. Both will use lagrangian shape functions and are of order two. For the free surface there will be imposed dirichlet boundary conditions on all boundaries except for the free surface.</p> <pre><code class=language-julia >reffe &#61; ReferenceFE&#40;lagrangian,Float64,order&#41;
+V_Ω &#61; TestFESpace&#40;
+    model_Ω,
+    reffe,
+    conformity&#61;:H1
+    &#41;
+V_Γ &#61; TestFESpace&#40;
+    model_Γ,
+    reffe,
+    conformity&#61;:H1,
+    dirichlet_tags&#61;&#91;&quot;bottom&quot;, &quot;water&quot;, &quot;inlet&quot;, &quot;outlet&quot;&#93;
+    &#41;</code></pre> <p>A <code>TrialFESpace</code> is established using the test spaces and dirichlet boundary conditions. Note that for the <code>&quot;bottom&quot;</code>, <code>&quot;water&quot;</code> and <code>&quot;outlet&quot;</code> boundary the value is set to zero using the function <code>u</code>. For the <code>&quot;inlet&quot;</code> boundary, the dirichlet condition is set to a vertical velocity profile which has been specified with the function <code>v_inlet</code>.</p> <pre><code class=language-julia >u&#40;x,t&#41; &#61; 0
+u&#40;t::Real&#41; &#61; x -&gt; u&#40;x,t&#41;
+U_Ω &#61; TransientTrialFESpace&#40;V_Ω&#41;
+U_Γ &#61; TransientTrialFESpace&#40;V_Γ, &#91;u,u,v_inlet,u&#93;&#41;</code></pre> <p>The test spaces and trial spaces are combined in a <code>MultiFieldFESpace</code> indicated by <code>X</code> and <code>Y</code>, respectively.</p> <pre><code class=language-julia >X &#61; TransientMultiFieldFESpace&#40;&#91;U_Ω,U_Γ&#93;&#41;
+Y &#61; MultiFieldFESpace&#40;&#91;V_Ω,V_Γ&#93;&#41;</code></pre> <h3 id=numerical_time_integration ><a href="#numerical_time_integration" class=header-anchor >Numerical time integration</a></h3> <p>To solve the system in time, a numerical time integration scheme needs to be chosen. As the set of equations consists of a second temporal derivative, the <a href="https://en.wikipedia.org/wiki/Newmark-beta_method">Newmark-beta</a> integration scheme has been chosen, which is widely used in the dynamic response of structures. Generally, the system is explicit, however, by choosing the parameters \(\beta = 0.25\) and \(\gamma = 0.5\), the system becomes unconditionally stable, which means that the time step can be chosen independently of the grid resolution. In this case, it was found that the results were accurate if the time step was equal to grid resolution in x-direction, resulting in a time step of 1/50 of the wave period.</p> \[ \mathbf{M} \ddot{y}+\mathbf{C} \dot{y}+f^{i n t}(y)=f^{e x t} \] \[ \begin{array}{l} \dot{y}_{n+1}=\dot{y}_{n}+(1-\gamma) \Delta t \ddot{y}_{n}+\gamma \Delta t \ddot{y}_{n+1} \\ y_{n+1}=y_{n}+\Delta t \dot{y}_{n}+\frac{\Delta t^{2}}{2}\left((1-2 \beta) \ddot{y}_{n}+2 \beta \ddot{y}_{n+1}\right) \\ \mathbf{M} \ddot{y}_{n+1}+\mathbf{C} \dot{y}_{n+1}+f^{\text {int }}\left(y_{n+1}\right)=f_{n+1}^{\text {ext }} \end{array} \] <pre><code class=language-julia >γ &#61; 0.5   # Newmark beta factor
+β &#61; 0.25  # Newmark beta factor
+Δt &#61; T / meshX # time step</code></pre> <h3 id=stabilisation_terms ><a href="#stabilisation_terms" class=header-anchor >Stabilisation terms</a></h3> <p>To make sure that the system of equations is coercive, the weak formulation is stabilised by stabilisation terms. Currently, <a href="https://www.tudelft.nl/citg/over-faculteit/afdelingen/hydraulic-engineering/sections/offshore-engineering/staff/dr-oj-oriol-colomes-gene">Oriol Colomés Gené</a> is doing research to find the correct set of stabilisation terms to solve this problem. For now, a default value of \(αh = 0.5\) is used to display the correct values.</p> <pre><code class=language-julia >∂ut_∂u &#61; γ/&#40;β*Δt&#41;
+∂utt_∂u &#61; 1/&#40;β*Δt^2&#41;
+αh &#61; 0.5                                                      # default value
+h_m &#61; min&#40;&#40;Xmax-Xmin&#41;/partition&#91;1&#93;,&#40;Zmax-Zmin&#41;/partition&#91;2&#93;&#41;
+β_f &#61; ∂ut_∂u / &#40;αh*g &#43; ∂ut_∂u&#41;                                # stability parameter fluid
+β_b &#61; ∂ut_∂u / &#40;αh*&#40;ρ_b/ρ_w*h*∂utt_∂u &#43; g&#41; &#43; ∂ut_∂u&#41;          # stability parameter structure
+γ_m &#61; 1.0e2*order*&#40;order&#43;1&#41;</code></pre> <p><code>s&#40;&#40;ϕ,η&#41;,&#40;w,v&#41;&#41;</code> is a function containing all stabilisation terms that will be included in the weak formulation to ensure a stable system.</p> <pre><code class=language-julia >s&#40;&#40;ϕ,η&#41;,&#40;w,v&#41;&#41; &#61; ∫&#40; &#40;mean_mask&#61;&#61;1&#41;*β_b*EI/ρ_w*&#40; - &#40; jump&#40;∇&#40;v&#41;⋅nΛb&#41; * mean&#40;Δ&#40;η&#41;&#41; &#43; jump&#40;αh*∇&#40;w&#41;⋅nΛb&#41; * mean&#40;Δ&#40;η&#41;&#41; &#41; - &#40; mean&#40;Δ&#40;v&#41;&#41; * jump&#40;∇&#40;η&#41;⋅nΛb&#41; &#41; &#43; γ_m/h_m * &#40; jump&#40;∇&#40;v&#41;⋅nΛb&#41; * jump&#40;∇&#40;η&#41;⋅nΛb&#41; &#43; αh*jump&#40;∇&#40;w&#41;⋅nΛb&#41; * jump&#40;∇&#40;ϕ&#41;⋅nΛb&#41; &#41; &#41; &#41;dΛb</code></pre>
+<h3 id=weak_formulation ><a href="#weak_formulation" class=header-anchor >Weak formulation</a></h3>
+<p>The weak form is the set of equations that will be solved by <code>Gridap</code>. The Newmark-beta scheme distinguishes between three different matrices; the mass matrix \(M\) which contains the seond derivative terms, the damping matrix \(C\) which contains the first derivative terms, \(f_{int}\) and the other terms of the standard form. Finally there is the vector that includes the external loads \(f_{ext}\). In <code>Gridap</code>, four functions are used that resemble the mentioned matrices. <code>m&#40;&#40;ϕtt,ηtt&#41;,&#40;w,v&#41;&#41;</code>, <code>c&#40;&#40;ϕt,ηt&#41;,&#40;w,v&#41;&#41;</code> and <code>a&#40;&#40;ϕ,η&#41;,&#40;w,v&#41;&#41;</code> form the bi-linear form and <code>b&#40;t,&#40;w,v&#41;&#41;</code> is the vector containing the externeal forces.</p>
+<pre><code class=language-julia >m&#40;&#40;ϕtt,ηtt&#41;,&#40;w,v&#41;&#41; &#61; ∫&#40; ρ_b/ρ_w*h*ηtt*β_b*&#40;v&#43;αh*w&#41; &#41;dΓb
+
+c&#40;&#40;ϕt,ηt&#41;,&#40;w,v&#41;&#41; &#61;  ∫&#40; β_f*&#40;αh*w &#43; v&#41;*ϕt - w*ηt &#41;dΓf &#43;
+                    ∫&#40; β_b*&#40;αh*w &#43; v&#41;*ϕt - w*ηt &#41;dΓb
+
+a&#40;&#40;ϕ,η&#41;,&#40;w,v&#41;&#41; &#61;  ∫&#40; ∇&#40;ϕ&#41;⋅∇&#40;w&#41; &#41;dΩ &#43;
+                  ∫&#40; β_f*&#40;v &#43; αh*w&#41; * g*η - μ₁*η*w - μ₂*ϕ*w/g &#41;dΓf &#43;
+                  ∫&#40; β_b*&#40;Δ&#40;v&#41; &#43; αh*Δ&#40;w&#41;&#41; * EI/ρ_w*Δ&#40;η&#41; &#43; β_b*&#40;v &#43; αh*w&#41; * g*η &#43; EI/ρ_w*αh*Δ&#40;w&#41;*Δ&#40;ϕ&#41; &#41;dΓb &#43;
+                  s&#40;&#40;ϕ,η&#41;,&#40;w,v&#41;&#41;
+
+b&#40;t,&#40;w,v&#41;&#41; &#61;  ∫&#40; v_inlet&#40;t&#41; * w &#41;dΓin &#43;
+              ∫&#40; β_b*&#40;αh*w &#43; v&#41;*&#40;-0.0&#41; &#41;dΓb</code></pre>
+<p>The set of equations is combined into one matrix and the numerical solver is set up.</p>
+<h3 id=solver ><a href="#solver" class=header-anchor >Solver</a></h3>
+<pre><code class=language-julia >op &#61; TransientConstantMatrixFEOperator&#40;m,c,a,b,X,Y&#41;
+ls &#61; LUSolver&#40;&#41;
+odes &#61; Newmark&#40;ls,Δt,γ,β&#41;
+solver &#61; TransientFESolver&#40;odes&#41;</code></pre>
+<p>The initial solution is set to zero.</p>
+<pre><code class=language-julia >x₀ &#61; interpolate_everywhere&#40;&#91;0.0, 0.0&#93;,X&#40;0.0&#41;&#41;
+v₀ &#61; interpolate_everywhere&#40;&#91;0.0, 0.0&#93;,X&#40;0.0&#41;&#41;
+a₀ &#61; interpolate_everywhere&#40;&#91;0.0, 0.0&#93;,X&#40;0.0&#41;&#41;</code></pre>
+<p>And all time steps are set, ready to be computed.</p>
+<pre><code class=language-julia >t₀ &#61; 0.0
+periods &#61; 50
+tf &#61; periods * T
+sol_t &#61; Gridap.solve&#40;solver,op,&#40;x₀,v₀,a₀&#41;,t₀,tf&#41;</code></pre>
+<p>The <code>WriteVTK</code> and <code>FileIO</code> modules are loaded to store the results on the computer and a directory is created to store all the files.</p>
+<pre><code class=language-julia >using WriteVTK
+using FileIO
+
+
+folderName &#61; &quot;solution&quot;
+if &#33;isdir&#40;folderName&#41;
+    mkdir&#40;folderName&#41;
+end</code></pre>
+<p>The model consists of three parts; the 2D potential domain and the free surface which can be subdivided into the fluid part and structure part. Each is stored seperately and can be viewed in <a href="https://www.paraview.org/download/">Paraview</a>.</p>
+<pre><code class=language-julia >filePath_Ω &#61; folderName * &quot;/fields_O&quot;
+filePath_Γb &#61; folderName * &quot;/fields_Gb&quot;
+filePath_Γf &#61; folderName * &quot;/fields_Gf&quot;
+pvd_Ω &#61; paraview_collection&#40;filePath_Ω, append&#61;false&#41;
+pvd_Γb &#61; paraview_collection&#40;filePath_Γb, append&#61;false&#41;
+pvd_Γf &#61; paraview_collection&#40;filePath_Γf, append&#61;false&#41;</code></pre>
+<p>Finally, a for loop is created that runs through all the timesteps and stores the potential <code>ϕn</code> and the surface elevation <code>ηn</code> of each time step.</p>
+<pre><code class=language-julia >for &#40;&#40;ϕn,ηn&#41;,tn&#41; in sol_t
+  println&#40;tn&#41;
+
+  pvd_Ω&#91;tn&#93; &#61; createvtk&#40;Ω,filePath_Ω * &quot;_&#36;tn.vtu&quot;,cellfields &#61; &#91;&quot;phi&quot; &#61;&gt; ϕn&#93;,order&#61;2&#41;
+  pvd_Γb&#91;tn&#93; &#61; createvtk&#40;Γb,filePath_Γb * &quot;_&#36;tn.vtu&quot;,cellfields &#61; &#91;&quot;eta&quot; &#61;&gt; ηn&#93;,nsubcells&#61;10&#41;
+  pvd_Γf&#91;tn&#93; &#61; createvtk&#40;Γf,filePath_Γf * &quot;_&#36;tn.vtu&quot;,cellfields &#61; &#91;&quot;eta&quot; &#61;&gt; ηn&#93;,nsubcells&#61;10&#41;
+
+end
+
+vtk_save&#40;pvd_Ω&#41;
+vtk_save&#40;pvd_Γb&#41;
+vtk_save&#40;pvd_Γf&#41;</code></pre>
+<p>This is the end of the tutorial and I hope you now understand how to build a fluid structure interaction in <code>Gridap</code>. If you want to learn extra things, like storing values of a test run or calculating the energy in the system, please take a look below in the Extra&#39;s section.</p>
+<h2 id=extras ><a href="#extras" class=header-anchor >Extra&#39;s</a></h2>
+<p>The following blocks of code help to further explore the results that have been generated with the numerical model. If you want to run this file please comment out the full Extra&#39;s section to have the code properly work.</p>
+<h3 id=storing_values ><a href="#storing_values" class=header-anchor >Storing values</a></h3>
+<p>Sometimes, you don&#39;t want to only look at the results in Paraview, but also use them for more scientific uses. Then it is convenient to store all the values in a <code>Dict&#40;&#41;</code>.  By creating a dictionary, it is possible to save all variables in a wrapper. Here, the module <code>JLD2</code> is used which also gives the possibilty to save a <code>.jld2</code> file which contains all the data. Just follow the approach below:</p>
+<pre><code class=language-julia >using DelimitedFiles
+using JLD2
+
+dat &#61; Dict&#40;&#41;
+
+dat&#91;:λ&#93; &#61; λ
+dat&#91;:ξ&#93; &#61; ξ
+dat&#91;:st&#93; &#61; steepness
+dat&#91;:d&#93; &#61; d
+dat&#91;:k&#93; &#61; k
+dat&#91;:ω&#93; &#61; ω
+dat&#91;:T&#93; &#61; T
+
+dataname &#61; &quot;data&quot;
+datapath &#61; &quot;solution&quot;
+save&#40;datapath * &quot;&#36;dataname.jld2&quot;, &quot;data&quot;, dat&#41;</code></pre>
+<h3 id=saving_free_surface_as_vector ><a href="#saving_free_surface_as_vector" class=header-anchor >Saving free surface as vector</a></h3>
+<p>To save surface elevation as a datastring, a few extra lines need to be added to the for loop. A <code>global</code> variable <code>ηns</code> is created before the for loop. In the loop, for each time step, the surface elevation is stored in a local variable <code>surface</code> and subsequently <code>push&#33;</code>&#39;ed to <code>ηns</code>. The datastring can be stored in a JLD2 file as mentioned in the previous section.</p>
+<pre><code class=language-julia >global ηns &#61; &#91;&#93;
+for &#40;&#40;ϕn,ηn&#41;,tn&#41; in sol_t
+  println&#40;tn&#41;
+
+  global cell_values_ηn &#61; get_cell_dof_values&#40;ηn&#41;
+  surface &#61; &#91;&#93;
+  for i in 1:length&#40;cell_values_ηn&#41;
+      push&#33;&#40;surface, cell_values_ηn&#91;i&#93;&#91;3&#93;&#41;
+  end
+  push&#33;&#40;ηns, surface&#39;&#41;
+  ηns &#61; vcat&#40;ηns...&#41;
+
+end</code></pre>
+<h3 id=calculating_energy_in_the_system ><a href="#calculating_energy_in_the_system" class=header-anchor >Calculating energy in the system</a></h3>
+<p>To check the amount of energy in the system, the sum of all values can be taken in the for loop as well. Here, we distinguish the energy between potential energy <code>Eₚ_f</code> and kinetic energy <code>Eₖ_f</code> for the free surface. For the structure, two more energy terms are taken into account; the kinetic energy <code>Eₖ_b</code> and the elastic energy <code>Eₚ_b</code> of the structure. In this example the energy is calculated at three different locations; the incident wave zone <code>xp1</code>, the hydroelastic wave zone <code>xp2</code> and the outgoing wave zone <code>xp3</code>.</p>
+<pre><code class=language-julia >global Eₖ_f_p1 &#61; &#91;&#93;
+global Eₚ_f_p1 &#61; &#91;&#93;
+
+global Eₖ_f_p2 &#61; &#91;&#93;
+global Eₖ_b_p2 &#61; &#91;&#93;
+global Eₚ_f_p2 &#61; &#91;&#93;
+global Eₚ_b_p2 &#61; &#91;&#93;
+
+global Eₖ_f_p3 &#61; &#91;&#93;
+global Eₚ_f_p3 &#61; &#91;&#93;
+
+global η_0 &#61; interpolate_everywhere&#40;0.0, U_Γ&#40;0.0&#41;&#41;
+
+global xp1 &#61; 1 * λ
+global xp2 &#61; 3 * λ
+global xp3 &#61; 9 * λ
+
+x_p1&#40;x&#41; &#61; &#40;xp1 &lt;&#61; x&#91;1&#93; &lt;&#61; &#40;xp1 &#43; λ&#41;&#41;
+x_p2&#40;x&#41; &#61; &#40;xp2 &lt;&#61; x&#91;1&#93; &lt;&#61; &#40;xp2 &#43; &#40;λ&#41;&#41;&#41;
+x_p3&#40;x&#41; &#61; &#40;xp3 &lt;&#61; x&#91;1&#93; &lt;&#61; &#40;xp3 &#43; λ&#41;&#41;
+
+for &#40;&#40;ϕn,ηn&#41;,tn&#41; in sol_t
+  println&#40;tn&#41;
+
+  push&#33;&#40;Eₖ_f_p1, 0.5 * ρ_w * ∑&#40; ∫&#40;∇&#40;ϕn&#41;⋅∇&#40;ϕn&#41; * x_p1 &#41;dΩ&#41;&#41;
+  push&#33;&#40;Eₚ_f_p1, 0.5 * ρ_w * g * ∑&#40; ∫&#40;&#40;ηn*ηn&#41; * x_p1&#41;dΓf &#41;&#41;
+
+  push&#33;&#40;Eₖ_f_p2, 0.5 * ρ_w * ∑&#40; ∫&#40;∇&#40;ϕn&#41;⋅∇&#40;ϕn&#41; * x_p2 &#41;dΩ&#41;&#41;
+  push&#33;&#40;Eₚ_b_p2, 0.5 * EI * &#40;∑&#40; ∫&#40;Δ&#40;ηn&#41;⋅Δ&#40;ηn&#41; * x_p2 &#41;dΓb &#41;&#41;&#41;
+  push&#33;&#40;Eₖ_b_p2, 0.5 * ρ_b * h * ∑&#40; ∫&#40;&#40;ηₜ*ηₜ&#41; * x_p2 &#41;dΓb &#41;&#41;
+  push&#33;&#40;Eₚ_f_p2, 0.5 * ρ_w * g * ∑&#40; ∫&#40;&#40;ηn*ηn&#41; * x_p2 &#41;dΓb &#41;&#41;
+
+  push&#33;&#40;Eₖ_f_p3, 0.5 * ρ_w * ∑&#40; ∫&#40;∇&#40;ϕn&#41;⋅∇&#40;ϕn&#41; * x_p3 &#41;dΩ &#41;&#41;
+  push&#33;&#40;Eₚ_f_p3, 0.5 * ρ_w * g * ∑&#40; ∫&#40;&#40;ηn*ηn&#41; * x_p3 &#41;dΓf &#41;&#41;
+
+  η_0 &#61; interpolate_everywhere&#40;ηn, U_Γ&#40;tn&#41;&#41;
+
+end</code></pre>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Oriol Colomés. Last modified: July 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div>
+  </main> 
+  <script src="/GridapOffshore.jl/libs/vela/metisMenu.min.js"></script>
+  <script src="/GridapOffshore.jl/libs/vela/slideout.min.js"></script>
+  
+    <script src="/GridapOffshore.jl/libs/katex/katex.min.js"></script>
+<script src="/GridapOffshore.jl/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+  
+  
+    <script src="/GridapOffshore.jl/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
