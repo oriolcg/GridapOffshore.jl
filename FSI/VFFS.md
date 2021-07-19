@@ -204,10 +204,10 @@ With these values the formula for the damping zone can be established. It is cho
 To define the resolution of the domain a partition is given. This is the amount of grid cells that the model contains. The resolution in the x-direction should be high, as we are interested in the exact shape of the wave. For the z-direction, however, we are only interested in the top layer near the free surface. It is assumed that the vertical velocity profile goes to zero when it reaches the bottom, so not much is going on as we proceed towards the bottom of the domain. Therefore, the resolution in x-direction is set to 50 cells per wavelength and for the z-direction only 10 cells are which have been unevenly spaced so that the resolution is fine at the free surface, but becomes coarser as we go down. This is done using the argument `map` in the function `CartesianDiscreteModel`. The function `simplexify` is used to change the mesh to an affine reference map, which is necessary to have the mapping work.
 
 $$
-z_{i}=d-\frac{d}{2^{i}} \quad \text { for } \quad i < n_{\text {cells}, z} \\
-$$
-$$
-z_{i}=d \quad \text { for } \quad i=n_{\text {cells}, z}
+\begin{align*}
+z_{i}=d-\frac{d}{2^{i}} & \quad \text { for } \quad i < n_{\text {cells}, z} \\
+z_{i}=d & \quad \text { for } \quad i=n_{\text {cells}, z}
+\end{align*}
 $$
 
 ```julia
