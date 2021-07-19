@@ -5,9 +5,9 @@ This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is mo
 
 <img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/viridis_3D.png" alt="3D model" width="75%" />
 
-~~~
+
 <center><i>3D model</i></center>
-~~~
+
 
 ## Mathematics
 First of all, let's dive in to the mathematics behind the problem. Potential flow is based on the principle that the velocity field can be described by the spatial derivatives of a scalar function, this is called the potential function. Moreover, the fluid is considered to be incom­pressible. This consideration implies that the divergence of the velocity is equal to zero. The potential function then satisfies the Laplace equation:
@@ -19,7 +19,7 @@ First of all, let's dive in to the mathematics behind the problem. Potential flo
 \end{array} \Leftrightarrow \nabla \cdot(\nabla \phi)=\Delta \phi=0 \quad\right. \text { in } \quad \Omega
 ```
 
-Where $\Omega$ denotes the 2D domain.
+Where $ \Omega $ denotes the 2D domain.
 
 Now it is time to set the boundary conditions of the domain. In this case, three different boundaries need to be applied:
 - The bottom boundary
