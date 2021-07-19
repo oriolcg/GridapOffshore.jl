@@ -3,7 +3,7 @@
 # Very Flexible Floating Structure (VFFS)
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="viridis_3D.png" alt="3D model" width="75%" />
+<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/viridis_3D.png" alt="3D model" width="75%" />
 
 <center><i>3D model</i></center>
 
@@ -32,7 +32,7 @@ $$
 
 In this model, not only the bottom of the domain ($\Gamma_{btm}$) is impermeable, but also the left ($\Gamma_L$) and right ($\Gamma_R$) hand side of the domain (see figure below).
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="boundary_conditions-02.png" alt="domain" width="75%" />
+<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/boundary_conditions-02.png" alt="domain" width="75%" />
 
 The top boundary, however, is not impermeable, but is the free surface boundary ($\Gamma_{fs}$). The fluid is able to move freely up and down, but mustn't leave the domain. Two conditions need to be applied here:
 - The dynamic boundary condition
@@ -165,7 +165,7 @@ However, this tutorial will focus on a 2D domain, so this will be discarded.
 ### Domain
 The domain of the model is defined such that the free surface waves can develop and travel a few wavelengths before they reach the structure. The structure must be longer than the incident wavelength in order to be assumed a VFFS. Finally, the waves will leave the structure and are free surface waves again. Before the waves reach the end of the domain the wave energy should be dissipated to prevent wave reflection at the right hand side of the domain ($\Gamma_R$) The picture below shows the set-up of the model.
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="boundary_conditions-04.png" alt="domain" width="75%" />
+<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/boundary_conditions-04.png" alt="domain" width="75%" />
 
 To define the domain the `Gridap` module is used and the different zones are specified:
 
