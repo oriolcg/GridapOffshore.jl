@@ -1,3 +1,4 @@
+@def title = "Very Flexible Floating Structures (VFFS)"
 @def mintoclevel=1
 @def maxtoclevel=1 
 
