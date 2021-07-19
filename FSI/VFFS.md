@@ -3,21 +3,17 @@
 # Very Flexible Floating Structure (VFFS)
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/viridis_3D.png" alt="3D model" width="75%" />
-
-
-<center><i>3D model</i></center>
-
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/viridis_3D.png" alt="3D model" width="75%" /><center><i>3D model</i></center>~~~
 
 ## Mathematics
 First of all, let's dive in to the mathematics behind the problem. Potential flow is based on the principle that the velocity field can be described by the spatial derivatives of a scalar function, this is called the potential function. Moreover, the fluid is considered to be incom­pressible. This consideration implies that the divergence of the velocity is equal to zero. The potential function then satisfies the Laplace equation:
 
-```math
+$$
 \left\{\begin{array}{l}
 \nabla \cdot \vec{u}=0 \\
 \nabla \phi=\vec{u}
 \end{array} \Leftrightarrow \nabla \cdot(\nabla \phi)=\Delta \phi=0 \quad\right. \text { in } \quad \Omega
-```
+$$
 
 Where $ \Omega $ denotes the 2D domain.
 
@@ -32,7 +28,8 @@ $$ \nabla \phi \cdot \vec{n}=0 \quad \text { on } \quad \Gamma_{L} \cup \Gamma_{
 
 In this model, not only the bottom of the domain ($\Gamma_{btm}$) is impermeable, but also the left ($\Gamma_L$) and right ($\Gamma_R$) hand side of the domain (see figure below).
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/boundary_conditions-02.png" alt="domain" width="75%" />
+
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/boundary_conditions-02.png" alt="domain" width="75%" />~~~
 
 The top boundary, however, is not impermeable, but is the free surface boundary ($\Gamma_{fs}$). The fluid is able to move freely up and down, but mustn't leave the domain. Two conditions need to be applied here:
 - The dynamic boundary condition
@@ -165,7 +162,7 @@ However, this tutorial will focus on a 2D domain, so this will be discarded.
 ### Domain
 The domain of the model is defined such that the free surface waves can develop and travel a few wavelengths before they reach the structure. The structure must be longer than the incident wavelength in order to be assumed a VFFS. Finally, the waves will leave the structure and are free surface waves again. Before the waves reach the end of the domain the wave energy should be dissipated to prevent wave reflection at the right hand side of the domain ($\Gamma_R$) The picture below shows the set-up of the model.
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="img/boundary_conditions-04.png" alt="domain" width="75%" />
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/boundary_conditions-04.png" alt="domain" width="75%" />~~~
 
 To define the domain the `Gridap` module is used and the different zones are specified:
 
@@ -207,10 +204,10 @@ With these values the formula for the damping zone can be established. It is cho
 To define the resolution of the domain a partition is given. This is the amount of grid cells that the model contains. The resolution in the x-direction should be high, as we are interested in the exact shape of the wave. For the z-direction, however, we are only interested in the top layer near the free surface. It is assumed that the vertical velocity profile goes to zero when it reaches the bottom, so not much is going on as we proceed towards the bottom of the domain. Therefore, the resolution in x-direction is set to 50 cells per wavelength and for the z-direction only 10 cells are which have been unevenly spaced so that the resolution is fine at the free surface, but becomes coarser as we go down. This is done using the argument `map` in the function `CartesianDiscreteModel`. The function `simplexify` is used to change the mesh to an affine reference map, which is necessary to have the mapping work.
 
 $$
-\begin{array}{cl}
-z_{i}=d-\frac{d}{2^{i}} & \text { for } \quad i<n_{\text {cells}, z} \\
-z_{i}=d & \text { for } \quad i=n_{\text {cells}, z}
-\end{array}
+z_{i}=d-\frac{d}{2^{i}} \quad \text { for } \quad i < n_{\text {cells}, z} \\
+$$
+$$
+z_{i}=d \quad \text { for } \quad i=n_{\text {cells}, z}
 $$
 
 ```julia
