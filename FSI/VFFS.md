@@ -1,44 +1,43 @@
+@def mintoclevel=1
+@def maxtoclevel=1 
 
-
-# Very Flexible Floating Structure (VFFS)
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="viridis_3D.png" alt="3D model" width="75%" />
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/viridis_3D.png" alt="3D model" width="75%" /><center><i>3D model</i></center>~~~
 
-<center><i>3D model</i></center>
+\toc
 
-## Mathematics
+# Problem description
 First of all, let's dive in to the mathematics behind the problem. Potential flow is based on the principle that the velocity field can be described by the spatial derivatives of a scalar function, this is called the potential function. Moreover, the fluid is considered to be incom­pressible. This consideration implies that the divergence of the velocity is equal to zero. The potential function then satisfies the Laplace equation:
 
-```math
+$$
 \left\{\begin{array}{l}
 \nabla \cdot \vec{u}=0 \\
 \nabla \phi=\vec{u}
 \end{array} \Leftrightarrow \nabla \cdot(\nabla \phi)=\Delta \phi=0 \quad\right. \text { in } \quad \Omega
-```
+$$
 
-Where $\Omega$ denotes the 2D domain.
+Where $ \Omega $ denotes the 2D domain.
 
 Now it is time to set the boundary conditions of the domain. In this case, three different boundaries need to be applied:
 - The bottom boundary
 - The free surface boundary
 - The structure boundary
 
-### Bottom boundary
+## Bottom boundary
 The bottom boundary (also called the sea bed boundary) states that the boundary is impermeable and given as:
-$$
-\nabla \phi \cdot \vec{n}=0 \quad \text { on } \quad \Gamma_{L} \cup \Gamma_{b t m} \cup \Gamma_{R} \quad \text { bottom b.c. }
-$$
+$$ \nabla \phi \cdot \vec{n}=0 \quad \text { on } \quad \Gamma_{L} \cup \Gamma_{b t m} \cup \Gamma_{R} \quad \text { bottom b.c. } $$
 
 In this model, not only the bottom of the domain ($\Gamma_{btm}$) is impermeable, but also the left ($\Gamma_L$) and right ($\Gamma_R$) hand side of the domain (see figure below).
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="boundary_conditions-02.png" alt="domain" width="75%" />
+
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/boundary_conditions-02.png" alt="domain" width="75%" />~~~
 
 The top boundary, however, is not impermeable, but is the free surface boundary ($\Gamma_{fs}$). The fluid is able to move freely up and down, but mustn't leave the domain. Two conditions need to be applied here:
 - The dynamic boundary condition
 - The kinematic boundary condition
 
-### Dynamic boundary condition
+## Dynamic boundary condition
 The dynamic free surface boundary condition states that the pressure above the free surface is constant and equal to zero. Using Bernoulli’s equation in the lin­earised form and assuming that there is no y­-direction (since the model is only 2D), the boundary condition is given as:
 $$
 \frac{\delta \phi}{\delta t}+g \eta=0 \quad \text { on } \quad \Gamma_{f s} \quad \text { dynamic free surface b.c. }
@@ -49,13 +48,13 @@ $$
 $$
 Where $\xi_i$ , $\omega$ and $k_i$ are the amplitude, the angular frequency and the wave number of the incident wave, respectively and $d$ the water depth.
 
-### Kinematic boundary condition
+## Kinematic boundary condition
 Finally, the third boundary condition is the kinematic free surface boundary condition which describes that the vertical velocity of the free surface has to be equal to the vertical motion of the flow and is given as follows:
 $$
 \frac{\delta \phi}{\delta z}=\frac{\delta \eta}{\delta t} \quad \text { on } \quad \Gamma_{f s} \quad \text { kinematic free surface b.c. }
 $$
 
-### Cauchy-Poisson condition
+## Cauchy-Poisson condition
 Using this boundary condition the wave number can be related to the wave frequency. By differenti­ating the dynamic free surface boundary condition and inserting the kinematic free surface boundary condition one obtains the Cauchy-­Poisson condition:
 $$
 \frac{\delta \phi}{\delta z}+\frac{1}{g} \frac{\delta^{2} \phi}{\delta t^{2}}=0
@@ -67,7 +66,7 @@ $$
 
 Using these equation, one is able to establish the free surface and the fluid domain can be modelled. However, we are interested in a fluid structure interaction, which means that there should also be a boundary condition at the location of the floating structure ($\Gamma_b$). This is done by imposing the Dynamic Euler-Bernoulli beam on a slice of the free surface.
 
-### Dynamic Euler-Bernoulli beam
+## Dynamic Euler-Bernoulli beam
 The dynamic Euler-Bernoulli beam is a one-dimensional equation that is valid if the loads are purely lateral and the deflections remain small. The general form of the Euler-Bernoulli beam describes a relation of the deflection of the beam ($w$) and an external force ($f(t)$) as function of time:
 $$
 E I \frac{\delta^{4} w}{\delta x^{4}}=-\mu \frac{\delta^{2} w}{\delta t^{2}}+f(x)
@@ -105,7 +104,7 @@ Inserting these wave terms and assuming initial conditions ($x = 0, t = 0$) the 
 $$
 \left(-\frac{\omega^{2} \rho_{b} h}{\rho_{w} g}+\frac{k_{b}^{4} E I}{\rho_{w} g B}+1\right) g \frac{\delta \phi}{\delta z}=-\frac{\delta^{2} \phi}{\delta t^{2}}
 $$
-### Damping zone
+## Damping zone
 At the end of the domain the wave energy should be dissipated to prevent wave reflection. This is done by adding a viscosity term to the set of equations. There are several ways to achieve this, but the most effective way is to use a method by [Kim Woo Min](http://dx.doi.org/10.1016/j.oceaneng.2013.10.012) who changed the kinematic boundary condition by adding two terms which dissipate the wave energy:
 $$
 \frac{\delta \eta}{\delta t}-\frac{\delta \phi}{\delta z}+\mu_{1} \eta+\frac{\mu_{2}}{g} \phi=0 \quad \text { kinematic b.c. damping zone}
@@ -119,9 +118,9 @@ $$
 $$
 Where $x_d$ is starting point of the numerical damping zone and $L_d$ is the length of the damping zone.
 
-## Numerical model
+# Numerical model
 As the mathematics behind the model have been shown, it is now time to rewrite the system of equations into the weak formulation and insert them into the numerical model. However, in order to do so, we should first set up the numrical model.
-### Wave parameters
+## Wave parameters
 Let's start with initiating a simple regular wave with a period of $T = 0.5$ s and a steepness of 1/25 with a water depth of $d = 1$ m. Using the just derived [Airy wave theory](https://en.wikipedia.org/wiki/Airy_wave_theory), the wave parameters can be calculated. The module `Roots` is used to calculate the root of the function.
 
 ```julia
@@ -138,7 +137,7 @@ k = abs(find_zero(f, 0.5))  # wave number
 ξ = λ * steepness / 2       # wave amplitude
 ```
 
-### Material parameters
+## Material parameters
 Next to the wave parameters, the structure also contains several properties, such as a stiffness, a thickness and a density. The fluid density has been set equal to the sea and the VFFS is made of a 0.005 m rubber-like material called [Neoprene](https://en.wikipedia.org/wiki/Neoprene), which is very flexible. The width of the structure has not been taken into account and it is assumed that the cross-section is a rectangle.
 
 ```julia
@@ -162,10 +161,10 @@ D = E * h^3 / (12 * (1-ν^2) )
 ```
 
 However, this tutorial will focus on a 2D domain, so this will be discarded.
-### Domain
+## Domain
 The domain of the model is defined such that the free surface waves can develop and travel a few wavelengths before they reach the structure. The structure must be longer than the incident wavelength in order to be assumed a VFFS. Finally, the waves will leave the structure and are free surface waves again. Before the waves reach the end of the domain the wave energy should be dissipated to prevent wave reflection at the right hand side of the domain ($\Gamma_R$) The picture below shows the set-up of the model.
 
-<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="boundary_conditions-04.png" alt="domain" width="75%" />
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/boundary_conditions-04.png" alt="domain" width="75%" />~~~
 
 To define the domain the `Gridap` module is used and the different zones are specified:
 
@@ -194,7 +193,7 @@ Zmax = d
 domain = (Xmin, Xmax, Zmin, Zmax)
 ```
 
-### Damping zone
+## Damping zone
 With these values the formula for the damping zone can be established. It is chosen to use a value of $\mu_0 = 10$:
 
 ```julia
@@ -203,14 +202,14 @@ With these values the formula for the damping zone can be established. It is cho
 μ₂(x::VectorValue) = -(μ₁(x::VectorValue)^2)/4 * (x[1]>x₂)
 ```
 
-### Resolution
+## Resolution
 To define the resolution of the domain a partition is given. This is the amount of grid cells that the model contains. The resolution in the x-direction should be high, as we are interested in the exact shape of the wave. For the z-direction, however, we are only interested in the top layer near the free surface. It is assumed that the vertical velocity profile goes to zero when it reaches the bottom, so not much is going on as we proceed towards the bottom of the domain. Therefore, the resolution in x-direction is set to 50 cells per wavelength and for the z-direction only 10 cells are which have been unevenly spaced so that the resolution is fine at the free surface, but becomes coarser as we go down. This is done using the argument `map` in the function `CartesianDiscreteModel`. The function `simplexify` is used to change the mesh to an affine reference map, which is necessary to have the mapping work.
 
 $$
-\begin{array}{cl}
-z_{i}=d-\frac{d}{2^{i}} & \text { for } \quad i<n_{\text {cells}, z} \\
-z_{i}=d & \text { for } \quad i=n_{\text {cells}, z}
-\end{array}
+\begin{align*}
+z_{i}=d-\frac{d}{2^{i}} & \quad \text { for } \quad i < n_{\text {cells}, z} \\
+z_{i}=d & \quad \text { for } \quad i=n_{\text {cells}, z}
+\end{align*}
 $$
 
 ```julia
@@ -231,7 +230,7 @@ model_Ω = simplexify(CartesianDiscreteModel(domain,partition, map=map))
 Ω = Triangulation(model_Ω)
 ```
 
-### Boundaries
+## Boundaries
 
 As the numerical domain `model_Ω` has been initiated, we wil now define the location of the floating structure using the following function and using a `mask`:
 
@@ -299,7 +298,7 @@ dΛb = Measure(Λb,2*order)
 mean_mask = CellField(mean(CellField(Γface_mask,Γ)),Λb)
 ```
 
-### Finite Element spaces
+## Finite Element spaces
 As the numerical domain has been set and the boundaries have been defined, the test spaces can be constructed. For this type of problem, two spaces will be built; one for the internal domain `model_Ω` and one for the free surface `model_Γ`. Both will use lagrangian shape functions and are of order two. For the free surface there will be imposed dirichlet boundary conditions on all boundaries except for the free surface.
 
 ```julia
@@ -333,7 +332,7 @@ X = TransientMultiFieldFESpace([U_Ω,U_Γ])
 Y = MultiFieldFESpace([V_Ω,V_Γ])
 ```
 
-### Numerical time integration
+## Numerical time integration
 To solve the system in time, a numerical time integration scheme needs to be chosen. As the set of equations consists of a second temporal derivative, the [Newmark-beta](https://en.wikipedia.org/wiki/Newmark-beta_method) integration scheme has been chosen, which is widely used in the dynamic response of structures. Generally, the system is explicit, however, by choosing the parameters $\beta = 0.25$ and $\gamma = 0.5$, the system becomes unconditionally stable, which means that the time step can be chosen independently of the grid resolution. In this case, it was found that the results were accurate if the time step was equal to grid resolution in x-direction, resulting in a time step of 1/50 of the wave period.
 
 $$
@@ -354,7 +353,7 @@ $$
 Δt = T / meshX # time step
 ```
 
-### Stabilisation terms
+## Stabilisation terms
 To make sure that the system of equations is coercive, the weak formulation is stabilised by stabilisation terms. Currently, [Oriol Colomés Gené](https://www.tudelft.nl/citg/over-faculteit/afdelingen/hydraulic-engineering/sections/offshore-engineering/staff/dr-oj-oriol-colomes-gene) is doing research to find the correct set of stabilisation terms to solve this problem. For now, a default value of $αh = 0.5$ is used to display the correct values.
 
 ```julia
@@ -373,7 +372,7 @@ h_m = min((Xmax-Xmin)/partition[1],(Zmax-Zmin)/partition[2])
 s((ϕ,η),(w,v)) = ∫( (mean_mask==1)*β_b*EI/ρ_w*( - ( jump(∇(v)⋅nΛb) * mean(Δ(η)) + jump(αh*∇(w)⋅nΛb) * mean(Δ(η)) ) - ( mean(Δ(v)) * jump(∇(η)⋅nΛb) ) + γ_m/h_m * ( jump(∇(v)⋅nΛb) * jump(∇(η)⋅nΛb) + αh*jump(∇(w)⋅nΛb) * jump(∇(ϕ)⋅nΛb) ) ) )dΛb
 ```
 
-### Weak formulation
+## Weak formulation
 
 The weak form is the set of equations that will be solved by `Gridap`. The Newmark-beta scheme distinguishes between three different matrices; the mass matrix $M$ which contains the seond derivative terms, the damping matrix $C$ which contains the first derivative terms, $f_{int}$ and the other terms of the standard form. Finally there is the vector that includes the external loads $f_{ext}$. In `Gridap`, four functions are used that resemble the mentioned matrices. `m((ϕtt,ηtt),(w,v))`, `c((ϕt,ηt),(w,v))` and `a((ϕ,η),(w,v))` form the bi-linear form and `b(t,(w,v))` is the vector containing the externeal forces.
 
@@ -394,7 +393,7 @@ b(t,(w,v)) =  ∫( v_inlet(t) * w )dΓin +
 
 The set of equations is combined into one matrix and the numerical solver is set up.
 
-### Solver
+## Solver
 
 ```julia
 op = TransientConstantMatrixFEOperator(m,c,a,b,X,Y)
@@ -463,10 +462,10 @@ vtk_save(pvd_Γf)
 
 This is the end of the tutorial and I hope you now understand how to build a fluid structure interaction in `Gridap`. If you want to learn extra things, like storing values of a test run or calculating the energy in the system, please take a look below in the Extra's section.
 
-## Extra's
+# Extra's
 The following blocks of code help to further explore the results that have been generated with the numerical model. If you want to run this file please comment out the full Extra's section to have the code properly work.
 
-### Storing values
+## Storing values
 Sometimes, you don't want to only look at the results in Paraview, but also use them for more scientific uses. Then it is convenient to store all the values in a `Dict()`.  By creating a dictionary, it is possible to save all variables in a wrapper. Here, the module `JLD2` is used which also gives the possibilty to save a `.jld2` file which contains all the data. Just follow the approach below:
 
 ```julia
@@ -488,7 +487,7 @@ datapath = "solution"
 save(datapath * "$dataname.jld2", "data", dat)
 ```
 
-### Saving free surface as vector
+## Saving free surface as vector
 To save surface elevation as a datastring, a few extra lines need to be added to the for loop. A `global` variable `ηns` is created before the for loop. In the loop, for each time step, the surface elevation is stored in a local variable `surface` and subsequently `push!`'ed to `ηns`. The datastring can be stored in a JLD2 file as mentioned in the previous section.
 
 ```julia
@@ -507,7 +506,7 @@ for ((ϕn,ηn),tn) in sol_t
 end
 ```
 
-### Calculating energy in the system
+## Calculating energy in the system
 To check the amount of energy in the system, the sum of all values can be taken in the for loop as well. Here, we distinguish the energy between potential energy `Eₚ_f` and kinetic energy `Eₖ_f` for the free surface. For the structure, two more energy terms are taken into account; the kinetic energy `Eₖ_b` and the elastic energy `Eₚ_b` of the structure. In this example the energy is calculated at three different locations; the incident wave zone `xp1`, the hydroelastic wave zone `xp2` and the outgoing wave zone `xp3`.
 
 ```julia
