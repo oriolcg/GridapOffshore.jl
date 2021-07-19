@@ -28,9 +28,7 @@ Now it is time to set the boundary conditions of the domain. In this case, three
 
 ### Bottom boundary
 The bottom boundary (also called the sea bed boundary) states that the boundary is impermeable and given as:
-$$
-\nabla \phi \cdot \vec{n}=0 \quad \text { on } \quad \Gamma_{L} \cup \Gamma_{b t m} \cup \Gamma_{R} \quad \text { bottom b.c. }
-$$
+$$ \nabla \phi \cdot \vec{n}=0 \quad \text { on } \quad \Gamma_{L} \cup \Gamma_{b t m} \cup \Gamma_{R} \quad \text { bottom b.c. } $$
 
 In this model, not only the bottom of the domain ($\Gamma_{btm}$) is impermeable, but also the left ($\Gamma_L$) and right ($\Gamma_R$) hand side of the domain (see figure below).
 
