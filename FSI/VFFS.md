@@ -1,9 +1,12 @@
 @def title = "Very Flexible Floating Structures (VFFS)"
 @def mintoclevel=1
 @def maxtoclevel=1 
+@def hascode = true
 
 *Authors:*
 *[Sjoerd van Hoof](https://github.com/sjoerdvanhoof) and [Oriol Colomés Gené](https://github.com/oriolcg)*
+
+*Published:* July 2021
 
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 
@@ -391,11 +394,16 @@ a((ϕ,η),(w,v)) =  ∫( ∇(ϕ)⋅∇(w) )dΩ +
                   ∫( β_b*(Δ(v) + αh*Δ(w)) * EI/ρ_w*Δ(η) + β_b*(v + αh*w) * g*η + EI/ρ_w*αh*Δ(w)*Δ(ϕ) )dΓb +
                   s((ϕ,η),(w,v))
 
-b(t,(w,v)) =  ∫( v_inlet(t) * w )dΓin +
-              ∫( β_b*(αh*w + v)*(-0.0) )dΓb
+b(t,(w,v)) =  ∫( v_inlet(t) * w )dΓin
 ```
 
 The set of equations is combined into one matrix and the numerical solver is set up.
+
+@@colbox-blue
+:warning: ~~~<b>Warning:</b>~~~      
+                     
+Depending on the configuration, the previous formulation might not result in accurate results. Please, check with the authors for the latest version. 
+@@
 
 ## Solver
 

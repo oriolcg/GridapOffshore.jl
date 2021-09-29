@@ -251,6 +251,19 @@ td {
   padding-left: 20%;
 }
 
+.im-30 {text-align: center;}
+.im-30 img {
+    padding: 0;
+    width: 30%;
+    vertical-align: middle;
+}
+
+.im-50 {text-align: center;}
+.im-50 img {
+    padding: 0;
+    width: 50%;
+}
+
 /* ==================================================================
     KATEX
 ================================================================== */
