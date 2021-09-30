@@ -1,6 +1,6 @@
 @def title = "Very Flexible Floating Structures (VFFS)"
 @def mintoclevel=1
-@def maxtoclevel=1 
+@def maxtoclevel=2 
 @def hascode = true
 
 *Authors:*
@@ -206,7 +206,7 @@ With these values the formula for the damping zone can be established. It is cho
 ```julia
 μ₀ = 10
 μ₁(x::VectorValue) = μ₀*(1.0 - cos(π/2*(x[1]-x₂)/Ld)) * (x[1]>x₂)
-μ₂(x::VectorValue) = -(μ₁(x::VectorValue)^2)/4 * (x[1]>x₂)
+μ₂(x::VectorValue) = -(μ₁(x)^2)/4 * (x[1]>x₂)
 ```
 
 ## Resolution
@@ -239,7 +239,7 @@ model_Ω = simplexify(CartesianDiscreteModel(domain,partition, map=map))
 
 ## Boundaries
 
-As the numerical domain `model_Ω` has been initiated, we wil now define the location of the floating structure using the following function and using a `mask`:
+As the numerical domain `model_Ω` has been initiated, we wil now define a discrete model on the boundary corresponding to the free surface and floating structure, `model_Γ`, and the equivalent triangulation, `Γ`.
 
 ```julia
 function is_beam(coords)
@@ -249,19 +249,66 @@ function is_beam(coords)
 end
 
 labels = get_face_labeling(model_Ω)
-
-bgface_to_mask = get_face_mask(labels,[3,4,6],1)
+add_tag_from_tags!(labels_Ω,"surface",[3,4,6])   # assign the label "surface" to the entity 3,4 and 6 (top corners and top side)
+bgface_to_mask = get_face_mask(labels,"surface",1)
 Γface_to_bgface = findall(bgface_to_mask)
 model_Γ = BoundaryDiscreteModel(Polytope{1},model_Ω,Γface_to_bgface)
 Γ = Triangulation(model_Γ)
+```
 
-Γface_coords = get_cell_coordinates(Γ)
-Γface_mask = lazy_map(is_beam,Γface_coords)
-Γbface_Γface = findall(Γface_mask)
-Γfface_Γface = findall(!,Γface_mask)
+We can also identify the entities that belong to the floating structure and assign them to a new label called `"beam"`:
 
-Γb = BoundaryTriangulation(model_Ω,view(Γface_to_bgface,Γbface_Γface))
-Γf = BoundaryTriangulation(model_Ω,view(Γface_to_bgface,Γfface_Γface))
+```julia
+function is_beam_boundary(xs)
+  is_on_xb₀ = [x[1]≈xb₀ for x in xs] # array of booleans of size the number of points in an element (for points, it will be an array of size 1)
+  is_on_xb₁ = [x[1]≈xb₁ for x in xs]
+  element_on_xb₀ = minimum(is_on_xb₀) # Boolean with "true" if at least one entry is true, "false" otherwise.
+  element_on_xb₁ = minimum(is_on_xb₁)
+  element_on_xb₀ | element_on_xb₁ # Return "true" if any of the two cases is true
+end
+
+
+labels_Γ = get_face_labeling(model_Γ)
+D = num_cell_dims(model_Γ) # spatial dimension of the model_Γ
+entity_tag_beam = num_entities(labels_Γ) + 1 # create a new tag for the beam
+for d in 0:D # loop over dimensions
+  grid_Γ_dim_d = Grid(ReferenceFE{d},model_Γ) # construct a grid from the entities of dimension "d" in Γ
+  coords_grid_Γ_dim_d = get_cell_coordinates(grid_Γ_dim_d) # get the coordinates of entities of dimension "d" of the grid (array of vectors of points). If model_Γ has 10 edges, this will be an array of 10 entries where each entry will contain a vector of 2 points.
+  beam_mask_in_grid_Γ_dim_d = lazy_map(is_beam,coords_grid_Γ_dim_d) # beam mask with the entities of dimension "d" 
+  beam_boundary_mask_in_grid_Γ_dim_d = lazy_map(is_beam_boundary,coords_grid_Γ_dim_d) # beam boundary mask with the entities of dimension "d"
+  # Create a list of indices that have value=True in the mask of active entities of dimension "d" in Gamma. Excluding the entities on the beam boundary and on the joint.
+  beam_to_Γ_dim_d = findall( beam_mask_in_grid_Γ_dim_d .&
+                             .!beam_boundary_mask_in_grid_Γ_dim_d)
+  # Tag the faces of dimension "d" (all the faces indexed in beam_to_Γ_dim_d)
+  for face in beam_to_Γ_dim_d
+    labels_Γ.d_to_dface_to_entity[d+1][face] = entity_tag_beam
+  end
+end
+
+# Add a name to the tag in labels_Γ
+add_tag!(labels_Γ,"beam",[entity_tag_beam])
+```
+
+Now we can construct the masks of edges in `Ω` that will be used to construct the triangulations for the floating structure and the free surface:
+
+```julia
+Γ_mask_in_Ω_dim_1 = get_face_mask(labels_Ω,"surface",1) # get the mask of edges in Ω that are on Γ
+Γ_to_Ω_dim_1 = findall(Γ_mask_in_Ω_dim_1) # Get indices of edges of Ω that are on Γ
+Γstr_mask_in_Γ_dim_1 = get_face_mask(labels_Γ,"beam",1) # get the mask of edges in Γ that are on the beam
+Γstr_to_Γ_dim_1 = findall(Γstr_mask_in_Γ_dim_1) # get indices of edges of Γ that are in the beam
+Γfs_to_Γ_dim_1 = findall(!,Γstr_mask_in_Γ_dim_1) # get indices of edges of Γ that are in the free surface
+Γstr_to_Ω_dim_1 = view(Γ_to_Ω_dim_1,Γstr_to_Γ_dim_1) # get indices of edges of Ω that are in the beam. To create that we "concatenate" two sets (from Γstr to Γ and from Γ to Ω)
+Γfs_to_Ω_dim_1 = view(Γ_to_Ω_dim_1,Γfs_to_Γ_dim_1) # Idem for the free surface
+# Now we can construct sub-triangulations
+Γb = BoundaryTriangulation(model_Ω,Γstr_to_Ω_dim_1)
+Γf = BoundaryTriangulation(model_Ω,Γfs_to_Ω_dim_1)
+```
+
+In addition, we construct the set of internal points of the strucutre (skeleton).
+
+```julia
+Λb_mask_in_Γ_dim_0 = get_face_mask(labels_Γ,"beam",0)
+Λb = SkeletonTriangulation(model_Γ,Λb_mask_in_Γ_dim_0)
 ```
 
 As well as the other boundaries:
@@ -272,6 +319,8 @@ add_tag_from_tags!(labels,"inlet",[7])
 add_tag_from_tags!(labels,"outlet",[8])
 add_tag_from_tags!(labels, "water", [9])
 ```
+
+
 
 The inlet of the domain is specified and a vertical velocity profile is imposed which is based on the gradient of the potential function:
 
@@ -299,14 +348,12 @@ dΓb = Measure(Γb,2*order)
 dΓf = Measure(Γf,2*order)
 dΓin = Measure(Γin,2*order)
 
-Λb = SkeletonTriangulation(model_Γ,Γface_mask)
 nΛb = get_normal_vector(Λb)
 dΛb = Measure(Λb,2*order)
-mean_mask = CellField(mean(CellField(Γface_mask,Γ)),Λb)
 ```
 
 ## Finite Element spaces
-As the numerical domain has been set and the boundaries have been defined, the test spaces can be constructed. For this type of problem, two spaces will be built; one for the internal domain `model_Ω` and one for the free surface `model_Γ`. Both will use lagrangian shape functions and are of order two. For the free surface there will be imposed dirichlet boundary conditions on all boundaries except for the free surface.
+As the numerical domain has been set and the boundaries have been defined, the test spaces can be constructed. For this type of problem, two spaces will be built; one for the internal domain `model_Ω` and one for the free surface `model_Γ`. Both will use lagrangian shape functions and are of order two. 
 
 ```julia
 reffe = ReferenceFE(lagrangian,Float64,order)
@@ -318,8 +365,7 @@ V_Ω = TestFESpace(
 V_Γ = TestFESpace(
     model_Γ,
     reffe,
-    conformity=:H1,
-    dirichlet_tags=["bottom", "water", "inlet", "outlet"]
+    conformity=:H1
     )
 ```
 
@@ -329,7 +375,7 @@ A `TrialFESpace` is established using the test spaces and dirichlet boundary con
 u(x,t) = 0
 u(t::Real) = x -> u(x,t)
 U_Ω = TransientTrialFESpace(V_Ω)
-U_Γ = TransientTrialFESpace(V_Γ, [u,u,v_inlet,u])
+U_Γ = TransientTrialFESpace(V_Γ)
 ```
 
 The test spaces and trial spaces are combined in a `MultiFieldFESpace` indicated by `X` and `Y`, respectively.
@@ -376,7 +422,7 @@ h_m = min((Xmax-Xmin)/partition[1],(Zmax-Zmin)/partition[2])
 `s((ϕ,η),(w,v))` is a function containing all stabilisation terms that will be included in the weak formulation to ensure a stable system.
 
 ```julia
-s((ϕ,η),(w,v)) = ∫( (mean_mask==1)*β_b*EI/ρ_w*( - ( jump(∇(v)⋅nΛb) * mean(Δ(η)) + jump(αh*∇(w)⋅nΛb) * mean(Δ(η)) ) - ( mean(Δ(v)) * jump(∇(η)⋅nΛb) ) + γ_m/h_m * ( jump(∇(v)⋅nΛb) * jump(∇(η)⋅nΛb) + αh*jump(∇(w)⋅nΛb) * jump(∇(ϕ)⋅nΛb) ) ) )dΛb
+s((ϕ,η),(w,v)) = ∫( β_b*EI/ρ_w*( - ( jump(∇(v)⋅nΛb) * mean(Δ(η)) + jump(αh*∇(w)⋅nΛb) * mean(Δ(η)) ) - ( mean(Δ(v)) * jump(∇(η)⋅nΛb) ) + γ_m/h_m * ( jump(∇(v)⋅nΛb) * jump(∇(η)⋅nΛb) + αh*jump(∇(w)⋅nΛb) * jump(∇(ϕ)⋅nΛb) ) ) )dΛb
 ```
 
 ## Weak formulation
