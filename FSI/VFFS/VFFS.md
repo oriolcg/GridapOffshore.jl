@@ -10,7 +10,7 @@
 
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 
-~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/viridis_3D.png" alt="3D model" width="75%" /><center><i>3D model</i></center>~~~
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/VFFS/img/viridis_3D.png" alt="3D model" width="75%" /><center><i>3D model</i></center>~~~
 
 \toc
 
