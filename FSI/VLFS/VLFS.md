@@ -8,6 +8,8 @@
 
 *Published:* October 2021
 
+*Gridap version:* [Gridap@0.14](https://github.com/gridap/Gridap.jl/tree/release-0.16)
+
 This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem using Gridap and provides the instructions to build a 2D model considering a multi-module VLFS, solved in the frequency domain.   
 
 \toc
