@@ -19,7 +19,7 @@ List of tutorials:
 
 This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem using Gridap and provides the instructions to build a 2D model considering a multi-module VLFS, solved in the frequency domain.
 @@im
-![](/FSI/img/VLFS/numerical_model.png) 
+![](/FSI/VLFS/img/numerical_model.png) 
 @@
 ~~~<u>Reference</u>~~~: Regout, Dorette. *Hydroelastic Analysis of a Multi-Module Very Large Floating Structure.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:838e2e14-d0e8-49dc-bad4-e7e132b248bc)
 
@@ -31,7 +31,7 @@ This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem usi
 
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 @@im-50
-![](/FSI/img/VFFS/viridis_3D.png) 
+![](/FSI/VFFS/img/viridis_3D.png) 
 @@    
 ~~~<u>Reference</u>~~~: van Hoof, Sjoerd. *Hydroelastic wave deformation of Very Flexible Floating Structures: A performance study of a monolithic finite element model.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:6652a9ee-61a6-4c4a-9b28-ef4fda1010f9)
 
@@ -43,7 +43,7 @@ This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is mo
 <!--
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 @@im-50
-![](/FSI/img/VFFS/viridis_3D.png) 
+![](/FSI/VFFS/img/viridis_3D.png) 
 @@    
 ~~~<u>Reference</u>~~~: van Hoof, Sjoerd. *Hydroelastic wave deformation of Very Flexible Floating Structures: A performance study of a monolithic finite element model.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:6652a9ee-61a6-4c4a-9b28-ef4fda1010f9)
 -->
@@ -53,7 +53,7 @@ This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is mo
 <!--
 This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem using Gridap and provides the instructions to build a 2D model considering a multi-module VLFS, solved in the frequency domain.
 @@im
-![](/FSI/img/VLFS/numerical_model.png) 
+![](/FSI/VLFS/img/numerical_model.png) 
 @@
 ~~~<u>Reference</u>~~~: Regout, Dorette. *Hydroelastic Analysis of a Multi-Module Very Large Floating Structure.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:838e2e14-d0e8-49dc-bad4-e7e132b248bc)
 -->
