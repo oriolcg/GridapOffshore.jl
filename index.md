@@ -21,7 +21,7 @@ List of tutorials:
     ![](/FSI/img/viridis_3D.png) 
     @@
     
-
+- October 2021: [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](/FSI/VLFS) by Dorette Regout
 # Tutorials by topic
 ## Floating structures
 - [~~~<b>Very Flexible Floating Structures (VFFS)</b>~~~](/FSI/VFFS) by Sjoerd van Hoof
@@ -30,3 +30,7 @@ List of tutorials:
     @@im-50
     ![](/FSI/img/viridis_3D.png) 
     @@
+
+- [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](/FSI/VLFS) by Dorette Regout
+
+    ~~~<u>Reference</u>~~~: Regout, Dorette. *Hydroelastic Analysis of a Multi-Module Very Large Floating Structure.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:838e2e14-d0e8-49dc-bad4-e7e132b248bc)
