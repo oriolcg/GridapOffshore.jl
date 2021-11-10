@@ -20,7 +20,7 @@ The total length of the VLFS is denoted by $L$, where the beams have a uniform a
 expressed by the velocity potential, which is a scalar function that represents the velocity field of the water in terms of spatial derivatives of the scalar function $\phi$.  
 
 
-~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/img/numerical_model.png" alt="VLFS model" width="75%" /><center><i>VLFS model</i></center>~~~
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/FSI/VLFS/img/numerical_model.png" alt="VLFS model" width="75%" /><center><i>VLFS model</i></center>~~~
 
 
 # Transformation to the frequency domain
