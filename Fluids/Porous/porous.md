@@ -8,7 +8,7 @@
 
 *Published:* January 2022
 
-*Gridap version:* [Gridap@0.16.5](https://github.com/gridap/Gridap.jl/tree/release-0.14)
+*Gridap version:* [Gridap@0.16.5](https://github.com/gridap/Gridap.jl/tree/release-0.16)
 
 This tutorial shows how wave-progression through a porous medium is modelled. The model uses viscous incompressible Navier Stokes in combination with Darcy-Forchheimer resistance terms in the momentum balance, implemented using the Gridap library.
 
@@ -188,6 +188,9 @@ The boundaries need to be defined (and tagged) in order to implement the boundar
     n_Γout = get_normal_vector(Γ_out)
 ```
 ### Zones within domain
+
+~~~<img style="display: block;max-width: 100%;height: auto;margin: auto;float: none!important;" src="/Fluids\Porous/img/domain.PNG" alt="Domain model" width="75%" /><center><i>3D model</i></center>~~~
+
 For the damping zone and actual porous medium, where the porous parameters are activated, the coordinates must be specified:
 
 ```julia
