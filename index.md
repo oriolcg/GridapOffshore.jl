@@ -14,6 +14,16 @@ List of tutorials:
 \toc
 
 # Tutorials by publishing date
+
+- January 2022: [~~~<b>Waves through porous medium</b>~~~](/Fluids/Porous/porous) by Joël Ruesen
+
+This tutorial shows how wave-progression through a porous medium is modelled. The model uses viscous incompressible Navier Stokes in combination with Darcy-Forchheimer resistance terms in the momentum balance, implemented using the Gridap library.
+
+~~~<u>Reference</u>~~~: Ruesen, Joël. *Wave damping by large-scale offshore kelp farms - a numerical modelling framework using a porous medium approach.* (2022). [MSc thesis](http://resolver.tudelft.nl/)
+
+
+***
+
     
 - October 2021: [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](/FSI/VLFS/VLFS) by Dorette Regout
 
@@ -57,3 +67,6 @@ This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem usi
 @@
 ~~~<u>Reference</u>~~~: Regout, Dorette. *Hydroelastic Analysis of a Multi-Module Very Large Floating Structure.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:838e2e14-d0e8-49dc-bad4-e7e132b248bc)
 -->
+
+## Porous structures
+- [~~~<b>Waves through porous medium</b>~~~](/Fluids/Porous/porous) by Joël Ruesen
