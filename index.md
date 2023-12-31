@@ -1,11 +1,11 @@
-@def title = "**Gridap Offshore**: A library of Finite Element tutorials for/by Offshore and Hydraulic Engineers"
+@def title = "<b>Gridap Offshore</b>: A library of Finite Element tutorials for/by Offshore and Hydraulic Engineers"
 @def tags = ["syntax", "code"]
 @def mintoclevel=1
 @def maxtoclevel=1
 
 This is a library of tutorials made for and by Hydraulic and Offshore Engineering students at [**Delft University of Technology**](www.tudelft.nl). The goal of this library is two fold: 
 
-1. Guide students on the use of [*Gridap.jl*](https://github.com/gridap/Gridap.jl) to solve PDEs with the Finite Element method, providing tutorials for a wide variety of background levels.
+1. Guide students on the use of [*Gridap.jl*](https://github.com/gridap/Gridap.jl) to solve PDEs, providing tutorials for a wide variety of background levels.
 2. Give visibility to the work of MSc students that used Gridap.jl in their MSc thesis/project.
 
 The collection of tutorials posted in this site are based on [*Gridap.jl*](https://gridap.github.io/Gridap.jl/stable/) a pure *Julia* Finite Element library. Here you will find tutorials covering contents in computational modeling taught in the [Civil Engineering MSc at TU Delft](https://www.tudelft.nl/en/education/programmes/masters/civil-engineering/msc-civil-engineering), and tutorials related to MSc thesis from different masters, including:
@@ -20,15 +20,13 @@ List of tutorials:
 
 # MSc Thesis tutorials
 
-- January 2022: [~~~<b>Waves through porous medium</b>~~~](/Fluids/Porous/porous) by Joël Ruesen
+## [~~~<b>Waves through porous medium</b>~~~](/Fluids/Porous/porous) by Joël Ruesen, January 2022
 
 This tutorial shows how wave-progression through a porous medium is modelled. The model uses viscous incompressible Navier Stokes in combination with Darcy-Forchheimer resistance terms in the momentum balance, implemented using the Gridap library.
 
-~~~<u>Reference</u>~~~: Ruesen, Joël. *Wave damping by large-scale offshore kelp farms - a numerical modelling framework using a porous medium approach.* (2022). [MSc thesis](http://resolver.tudelft.nl/)
+~~~<u>Reference</u>~~~: Ruesen, Joël. *Wave damping by large-scale offshore kelp farms - a numerical modelling framework using a porous medium approach.* (2022). [MSc thesis](http://resolver.tudelft.nl/uuid:fcba6da4-5d83-415d-a5b9-28fc054e7b15)
 
-***
-    
-- October 2021: [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](/FSI/VLFS/VLFS) by Dorette Regout
+## [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](/FSI/VLFS/VLFS) by Dorette Regout, October 2021
 
 This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem using Gridap and provides the instructions to build a 2D model considering a multi-module VLFS, solved in the frequency domain.
 @@im
@@ -36,9 +34,7 @@ This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem usi
 @@
 ~~~<u>Reference</u>~~~: Regout, Dorette. *Hydroelastic Analysis of a Multi-Module Very Large Floating Structure.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:838e2e14-d0e8-49dc-bad4-e7e132b248bc)
 
-***
-
-- July 2021: [~~~<b>Very Flexible Floating Structures (VFFS)</b>~~~](/FSI/VFFS/VFFS) by Sjoerd van Hoof
+## [~~~<b>Very Flexible Floating Structures (VFFS)</b>~~~](/FSI/VFFS/VFFS) by Sjoerd van Hoof, July 2021
 
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 @@im-50
