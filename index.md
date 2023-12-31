@@ -18,17 +18,17 @@ List of tutorials:
 
 # Theory tutorials
 
-1. [~~~<b>Solving PDEs with Gridap.jl</b>~~~](/Theory/tutorial_1/intro_FE_1D.md)
+1. [~~~<b>Solving PDEs with Gridap.jl</b>~~~](./Theory/tutorial_1/intro_FE_1D)
 
 # MSc Thesis tutorials
 
-## [~~~<b>Waves through porous medium</b>~~~](/MSc_thesis/Porous/2022_J_Ruesen/porous.md) by Joël Ruesen, January 2022
+## [~~~<b>Waves through porous medium</b>~~~](./MSc_thesis/Porous/2022_J_Ruesen/porous) by Joël Ruesen, January 2022
 
 This tutorial shows how wave-progression through a porous medium is modelled. The model uses viscous incompressible Navier Stokes in combination with Darcy-Forchheimer resistance terms in the momentum balance, implemented using the Gridap library.
 
 ~~~<u>Reference</u>~~~: Ruesen, Joël. *Wave damping by large-scale offshore kelp farms - a numerical modelling framework using a porous medium approach.* (2022). [MSc thesis](http://resolver.tudelft.nl/uuid:fcba6da4-5d83-415d-a5b9-28fc054e7b15)
 
-## [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](/MSc_thesis/Floating/2021_D_Regout/VLFS.md) by Dorette Regout, October 2021
+## [~~~<b>Very Large Floating Structures (VLFS)</b>~~~](./MSc_thesis/Floating/2021_D_Regout/VLFS) by Dorette Regout, October 2021
 
 This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem using Gridap and provides the instructions to build a 2D model considering a multi-module VLFS, solved in the frequency domain.
 @@im
@@ -36,7 +36,7 @@ This tutorial shows how to solve a Fluid Structure Interaction (FSI) problem usi
 @@
 ~~~<u>Reference</u>~~~: Regout, Dorette. *Hydroelastic Analysis of a Multi-Module Very Large Floating Structure.* (2021). [MSc thesis](http://resolver.tudelft.nl/uuid:838e2e14-d0e8-49dc-bad4-e7e132b248bc)
 
-## [~~~<b>Very Flexible Floating Structures (VFFS)</b>~~~](/MSc_thesis/Floating/2021_S_van_Hoof/VFFS.md) by Sjoerd van Hoof, July 2021
+## [~~~<b>Very Flexible Floating Structures (VFFS)</b>~~~](./MSc_thesis/Floating/2021_S_van_Hoof/VFFS) by Sjoerd van Hoof, July 2021
 
 This tutorial shows how a Fluid Structure Interaction (FSI) in a 2D domain is modelled. Potential flow is used to model the fluid and on top a Dynamic Euler-Bernoulli beam is located that serves as the floating structure.
 @@im-50
