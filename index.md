@@ -18,6 +18,8 @@ List of tutorials:
 
 # Theory tutorials
 
+1. [~~~<b>Solving PDEs with Gridap.jl</b>~~~](/Theory/tutorial_1/intro_FE_1D.md)
+
 # MSc Thesis tutorials
 
 ## [~~~<b>Waves through porous medium</b>~~~](/MSc_thesis/Porous/2022_J_Ruesen/porous.md) by Joël Ruesen, January 2022
