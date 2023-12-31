@@ -15,7 +15,7 @@ ignore = ["node_modules/"]
 generate_rss = true
 website_title = "Gridap Offshore"
 website_descr = "A library of Finite Element tutorials for/by Offshore and Hydraulic Engineers"
-website_url   = ""
+website_url   = "https://oriolcg.github.io/GridapOffshore.jl/"
 +++
 
 <!--
