@@ -6,13 +6,7 @@ In this tutorial we will learn how to solve PDEs using the Finite Element method
 
 ### Problem setting
 
-```{figure} ../figures/barDefinition-1.png
----
-height: 150px
-name: rodDefinition
----
-One dimensional rod with distributed load
-```
+\figenv{One dimensional rod with distributed load}{/img/barDefinition-1.png}{width:50%;}
 
 Here we consider the simple 1-dimensional rod equation as presented in {eq}`1drodsimplified`-{eq}`1drodBCs`. From the strong form we can derive the [*weak form*](./chapter1-3_Weak_form_of_the_problem.md) of the problem {eq}`1drod_weak_final`.
 
@@ -125,10 +119,4 @@ To visualize the solution we use [Paraview](https://www.paraview.org/), an open-
 writevtk(Ω,"solution",cellfields=["u"=>uₕ])
 ```
 
-```{figure} ../figures/Gridap_solution.png
----
-height: 400px
-name: gridapsolution
----
-Solution of the rod equation using Gridap
-```
+\figenv{One dimensional rod with distributed load}{/img/Gridap_solution.png}{width:50%;}
