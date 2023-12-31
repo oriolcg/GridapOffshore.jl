@@ -1,4 +1,4 @@
-Sitemap: sitemap.xml
+Sitemap: https://oriolcg.github.io/GridapOffshore.jl/sitemap.xml
 
 User-agent: *
 Disallow:
