@@ -14,7 +14,7 @@ ignore = ["node_modules/"]
 # RSS (the website_{title, descr, url} must be defined to get RSS)
 generate_rss = true
 website_title = "Gridap Offshore"
-website_descr = "A library of Finite Element tutorials for/by Hydraulic and Offshore Engineers"
+website_descr = "A library of Finite Element tutorials for/by Offshore and Hydraulic Engineers"
 website_url   = ""
 +++
 
