@@ -1,4 +1,4 @@
-@def title = "<b>Gridap Offshore</b>: A library of Finite Element tutorials for/by Offshore and Hydraulic Engineers"
+@def title = "<b>Gridap Offshore</b><br>A library of Finite Element tutorials for/by Offshore and Hydraulic Engineers"
 @def tags = ["syntax", "code"]
 @def mintoclevel=1
 @def maxtoclevel=1
@@ -12,9 +12,37 @@ The collection of tutorials posted in this site are based on [*Gridap.jl*](https
 - [Master of Offshore and Dredging Engineering](https://www.tudelft.nl/onderwijs/opleidingen/masters/offshore-dredging-engineering/msc-offshore-dredging-engineering)
 - [Master of Civil Engineering: Hydraulic Engineering](https://www.tudelft.nl/onderwijs/opleidingen/masters/ce/msc-civil-engineering-test/old/old/old/oud/old/old/old/msc-programme/track-hydraulic-engineering)
 
-List of tutorials:
+## List of tutorials:
 
 \toc
+
+# Additional material
+
+The tutorials in this library are not covering all the features of Gridap. If you are interested in additional Gridap-related material, please take a look at the following sources:
+
+## Sources to learn Julia: 
+
+- Download the [binary and documentation](https://julialang.org/) 
+- [Short free courses](https://juliaacademy.com/courses?preview=logged_out)
+- Introduction workshop to julia: [Introduction to Julia | Jose Storopoli | JuliaCon 2022](https://www.youtube.com/watch?v=uiQpwMQZBTA) 
+
+## Sources about Gridap.jl: 
+
+- [Gridap.jl](https://github.com/gridap/Gridap.jl): a FE package to solve PDEs in Julia 
+- [Gridap wiki](https://github.com/gridap/Gridap.jl/wiki). In this wiki-page you will find interesting descriptions on: 
+  - Getting started with Gridap 
+  - Using VS-Code as Julia IDE 
+  - REPL workflows 
+  - "How-to"  tutorials on creating a julia package, generating documentation, precompiling a package and registering a package in the Julia server. 
+- [Gridap tutorials](https://gridap.github.io/Gridap.jl/dev/)
+
+## Presentations at JuliaCon: 
+
+- [Solving partial differential equations in Julia with Gridap.jl | Francesc Verdugo | JuliaCon 2020](https://www.youtube.com/watch?v=txcb3ROQBS4)
+- [New tools to solve PDEs in Julia with Gridap.jl | Francesc Verdugo et al | JuliaCon2021](https://www.youtube.com/watch?v=hsQiFP4S5RY)
+- [Solving transient PDEs in Julia with Gridap.jl | Oriol Colomes | JuliaCon 2022](https://www.youtube.com/watch?v=heeiSoKnlUk) 
+
+
 
 # Theory tutorials
 
