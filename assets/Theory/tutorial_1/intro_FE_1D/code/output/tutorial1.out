@@ -1,0 +1,3 @@
+ArgumentError: Package Gridap not found in current path:
+- Run `import Pkg; Pkg.add("Gridap")` to install the Gridap package.
+
