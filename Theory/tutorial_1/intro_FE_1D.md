@@ -7,6 +7,11 @@ In this tutorial we will learn how to solve PDEs using the Finite Element method
 
 *Gridap.jl* is a multi-purpose FE library writen in pure [*Julia language*](https://julialang.org/). The *Gridap.jl* library is a very complete that supports linear and nonlinear PDE systems for scalar and vector fields, single and multi-field problems, conforming and nonconforming FE discretizations, on structured and unstructured meshes of simplices and n-cubes. One of the main advantages of *Gridap.jl* is that it has a very expressive API allowing one to solve complex PDEs with very few lines of code, as we will see in what follows.
 
+Before starting the tutorial we load ``Gridap``.
+```julia
+using Gridap
+```
+
 # Problem setting
 
 \figenv{One dimensional rod with distributed load}{/Theory/tutorial_1/img/barDefinition-1.png}{width:80%;}
@@ -124,3 +129,44 @@ writevtk(Ω,"solution",cellfields=["u"=>uₕ])
 ```
 
 \figenv{Finite Element solution}{/Theory/tutorial_1/img/Gridap_solution.png}{width:120%;}
+
+# Full script
+
+```julia:./code/tutorial1.jl
+module Gridap_rod
+
+  using Gridap
+  # Discrete model
+  model = CartesianDiscreteModel((0.0,3.0), (10,))
+  labels = get_face_labeling(model)
+  add_tag_from_tags!(labels,"left",[1])
+  add_tag_from_tags!(labels,"right",[2])
+
+  # Triangulations
+  Ω = Triangulation(model)
+  Γ = Boundary(Ω,tags="right")
+
+  # FE spaces
+  reffe = ReferenceFE(lagrangian,Float64,1)
+  V = TestFESpace(Ω,reffe,dirichlet_tags="left")
+  U = TrialFESpace(V,0.0)
+
+  # Integration measures
+  dΩ = Measure(Ω,2)
+  dΓ = Measure(Γ,2)
+
+  # Problem parameters
+  EA = 1.0e3
+  F = 10
+  q = -10
+
+  # Weak form
+  a(u,v) = ∫(EA*(∇(v)⋅∇(u)))dΩ
+  l(v) = ∫(q*v)dΩ + ∫(F*v)dΓ
+  op = AffineFEOperator(a,l,U,V)
+
+  uₕ = solve(op)
+  writevtk(Ω,"solution",cellfields=["u"=>uₕ])
+end 
+```
+<!-- -->
