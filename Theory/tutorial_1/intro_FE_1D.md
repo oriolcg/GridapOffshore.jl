@@ -132,7 +132,7 @@ writevtk(Ω,"solution",cellfields=["u"=>uₕ])
 
 # Full script
 
-```julia:./code/tutorial1.jl
+```julia
 module Gridap_rod
 
   using Gridap
