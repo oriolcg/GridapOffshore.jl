@@ -31,5 +31,7 @@ Add here global latex commands to use throughout your pages.
 </figure>
 ~~~
 }
+\newcommand{\jump}[1]{\llbracket#1\rrbracket}
+\newcommand{\mean}[1]{\left\{#1\right\}}
 
 @def prepath = "GridapOffshore.jl"

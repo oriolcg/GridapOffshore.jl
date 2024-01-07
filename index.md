@@ -47,6 +47,7 @@ The tutorials in this library are not covering all the features of Gridap. If yo
 # Theory tutorials
 
 1. [~~~<b>Solving PDEs with Gridap.jl</b>~~~](./Theory/tutorial_1/intro_FE_1D)
+1. [~~~<b>Solving the Euler-Bernoulli equation with Continuous/Discontinuos FEs</b>~~~](./Theory/tutorial_EulerBernoulli/euler_bernoulli)
 
 # MSc Thesis tutorials
 

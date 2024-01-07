@@ -65,7 +65,7 @@ Vₕ = TestFESpace(Ω,reffe,dirichlet_tags="left")
 The FE space for the unknowns $u_h$ (trial FE space) is constructed from the test FE space and specifying the value of the Dirichlet boundary condition, in that case $u=0.0$ on $x=0$.
 
 ```julia
-Uₕ = TrialFESpace(V,0.0) 
+Uₕ = TrialFESpace(Vₕ,0.0) 
 ```
 
 # Discrete form
