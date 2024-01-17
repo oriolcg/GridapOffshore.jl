@@ -173,9 +173,137 @@ display(plt)</code></pre>
 <figcaption> Shear locking with stabilized formulation</figcaption>
 </figure>
 
+<h1 id=full_script ><a href="#full_script" class=header-anchor >Full script</a></h1>
+<pre><code class="julia hljs"><span class=hljs-keyword >module</span> Timoshenko
+<span class=hljs-keyword >using</span> Gridap
+
+<span class=hljs-comment ># Discrete model</span>
+L = <span class=hljs-number >3.0</span>
+domain = (<span class=hljs-number >0</span>,L)
+partition = (<span class=hljs-number >10</span>,)
+model = CartesianDiscreteModel(domain,partition)
+
+<span class=hljs-comment ># Boundary labels</span>
+labels = get_face_labeling(model)
+add_tag_from_tags!(labels,<span class=hljs-string >&quot;left&quot;</span>,[<span class=hljs-number >1</span>])
+add_tag_from_tags!(labels,<span class=hljs-string >&quot;right&quot;</span>,[<span class=hljs-number >2</span>])
+
+<span class=hljs-comment ># Triangulations</span>
+Ω = Triangulation(model)
+Γₗ = Boundary(Ω,tags=<span class=hljs-string >&quot;left&quot;</span>)
+Γᵣ = Boundary(Ω,tags=<span class=hljs-string >&quot;right&quot;</span>)
+
+<span class=hljs-comment ># FE spaces</span>
+order = <span class=hljs-number >1</span>
+reffeᵥ = ReferenceFE(lagrangian,<span class=hljs-built_in >Float64</span>,order)
+reffeθ = ReferenceFE(lagrangian,VectorValue{<span class=hljs-number >1</span>,<span class=hljs-built_in >Float64</span>},order)
+Vₕ = TestFESpace(Ω,reffeᵥ,dirichlet_tags=<span class=hljs-string >&quot;left&quot;</span>)
+Ψₕ = TestFESpace(Ω,reffeθ,dirichlet_tags=<span class=hljs-string >&quot;left&quot;</span>)
+Uₕ = TrialFESpace(Vₕ,<span class=hljs-number >0.0</span>)
+Θₕ = TrialFESpace(Ψₕ,VectorValue(<span class=hljs-number >0.0</span>))
+Xₕ = MultiFieldFESpace([Uₕ,Θₕ])
+Yₕ = MultiFieldFESpace([Vₕ,Ψₕ])
+
+<span class=hljs-comment ># Integration measures and normals</span>
+dΩ = Measure(Ω,<span class=hljs-number >2</span>*order)
+dΓᵣ = Measure(Γᵣ,<span class=hljs-number >2</span>*order)
+
+<span class=hljs-comment ># Problem parameters</span>
+b =<span class=hljs-number >1.0</span>
+E = <span class=hljs-number >1.0e6</span>
+ν = <span class=hljs-number >0.2</span>
+G = E/(<span class=hljs-number >2</span>*(<span class=hljs-number >1</span>+ν))
+EI(t) = b/<span class=hljs-number >12</span>*t^<span class=hljs-number >3</span>*E
+GA(t) = G*t*b
+F = -<span class=hljs-number >1.0</span>
+
+<span class=hljs-comment ># Weak form</span>
+a(t,(v,θ),(w,ψ)) = ∫( EI(t)*(∇(θ)⊙∇(ψ)) + GA(t)*((∇(v)-θ)⋅(∇(w)-ψ)) )dΩ
+l((w,ψ)) = ∫( F*w )dΓᵣ
+op(t) = AffineFEOperator((x,y)-&gt;a(t,x,y),l,Xₕ,Yₕ)
+
+<span class=hljs-comment ># Solution</span>
+t₀ = <span class=hljs-number >0.1</span>
+vₕ,θₕ = solve(op(t₀))
+
+<span class=hljs-comment ># Postprocessing</span>
+writevtk(Ω,<span class=hljs-string >&quot;Timoshenko_solution&quot;</span>,cellfields=[<span class=hljs-string >&quot;v&quot;</span>=&gt;vₕ,<span class=hljs-string >&quot;theta&quot;</span>=&gt;θₕ])
+xₚ = Point((L,))
+vₑ(t) = F*L^<span class=hljs-number >3</span>/(<span class=hljs-number >3</span>*EI(t))
+println(<span class=hljs-string >&quot;Computed solution: <span class=hljs-subst >$(vₕ(xₚ)</span>), Exact solution: <span class=hljs-subst >$(vₑ(t₀)</span>), Error: <span class=hljs-subst >$(abs(vₕ(xₚ)</span>-vₑ(t₀)))&quot;</span>)
+
+<span class=hljs-comment ># Shear Locking</span>
+ts = <span class=hljs-built_in >Float64</span>[]
+v_rel = <span class=hljs-built_in >Float64</span>[]
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-number >0</span>:<span class=hljs-number >10</span>
+  tᵢ = <span class=hljs-number >2.0</span>^(-float(i))
+  vₕ,θₕ = solve(op(tᵢ))
+  push!(ts,tᵢ)
+  push!(v_rel,abs(vₕ(xₚ)/vₑ(tᵢ)))
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># Plot results</span>
+<span class=hljs-keyword >using</span> Plots
+plt = plot(xlabel=<span class=hljs-string >&quot;t&quot;</span>,ylabel=<span class=hljs-string >&quot;vₕ/vₑ&quot;</span>,title=<span class=hljs-string >&quot;Shear Locking&quot;</span>,legend=:bottomright,xscale=:log10,yscale=:log10)
+plot!(plt,ts,v_rel,marker=:circle,label=<span class=hljs-string >&quot;Galerkin&quot;</span>)
+plot!(plt,ts,ones(length(ts)),ls=:dash,color=:black,label=<span class=hljs-literal >false</span>)
+display(plt)
+
+<span class=hljs-comment ># Solution 1: subintegration</span>
+dΩ₁ = Measure(Ω,<span class=hljs-number >1</span>)
+a₁(t,(v,θ),(w,ψ)) = ∫( GA(t)*(∇(v)⋅∇(w)) )dΩ + ∫( EI(t)*(∇(θ)⊙∇(ψ)) + GA(t)*((-∇(v)⋅ψ-θ⋅∇(w)+θ⋅ψ)) )dΩ₁
+op₁(t) = AffineFEOperator((x,y)-&gt;a₁(t,x,y),l,Xₕ,Yₕ)
+v_rel₁ = <span class=hljs-built_in >Float64</span>[]
+<span class=hljs-keyword >for</span> tᵢ <span class=hljs-keyword >in</span> ts
+  vₕ,θₕ = solve(op₁(tᵢ))
+  push!(v_rel₁,abs(vₕ(xₚ)/vₑ(tᵢ)))
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># Plot results with subintegration</span>
+plot!(plt,ts,v_rel₁,marker=:square,label=<span class=hljs-string >&quot;Sub-integration&quot;</span>)
+display(plt)
+
+<span class=hljs-comment ># Solution 2: compatible spaces</span>
+order = <span class=hljs-number >2</span>
+reffeᵥ₂ = ReferenceFE(lagrangian,<span class=hljs-built_in >Float64</span>,order)
+reffeθ₂ = ReferenceFE(lagrangian,VectorValue{<span class=hljs-number >1</span>,<span class=hljs-built_in >Float64</span>},order-<span class=hljs-number >1</span>)
+Vₕ₂ = TestFESpace(Ω,reffeᵥ₂,dirichlet_tags=<span class=hljs-string >&quot;left&quot;</span>)
+Ψₕ₂ = TestFESpace(Ω,reffeθ₂,dirichlet_tags=<span class=hljs-string >&quot;left&quot;</span>)
+Uₕ₂ = TrialFESpace(Vₕ₂,<span class=hljs-number >0.0</span>)
+Θₕ₂ = TrialFESpace(Ψₕ₂,VectorValue(<span class=hljs-number >0.0</span>))
+Xₕ₂ = MultiFieldFESpace([Uₕ₂,Θₕ₂])
+Yₕ₂ = MultiFieldFESpace([Vₕ₂,Ψₕ₂])
+op₂(t) = AffineFEOperator((x,y)-&gt;a(t,x,y),l,Xₕ₂,Yₕ₂)
+v_rel₂ = <span class=hljs-built_in >Float64</span>[]
+<span class=hljs-keyword >for</span> tᵢ <span class=hljs-keyword >in</span> ts
+  vₕ,θₕ = solve(op₂(tᵢ))
+  push!(v_rel₂,abs(vₕ(xₚ)/vₑ(tᵢ)))
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># Plot results with compatible spaces</span>
+plot!(plt,ts,v_rel₂,marker=:diamond,label=<span class=hljs-string >&quot;Q2/Q1&quot;</span>)
+display(plt)
+
+<span class=hljs-comment ># Solution 3: Stabilized formulation</span>
+h = L/partition[<span class=hljs-number >1</span>]
+c₁ = <span class=hljs-number >12.0</span>; c₂ = <span class=hljs-number >1.0</span>; c₃ = <span class=hljs-number >12.0</span>; c₄ = <span class=hljs-number >1.0</span>
+τᵥ(t) = <span class=hljs-number >1.0</span>/(c₃*GA(t)/(h^<span class=hljs-number >2</span>)+c₄*(GA(t)^<span class=hljs-number >2</span>/EI(t)))
+τθ(t) = <span class=hljs-number >1.0</span>/(c₁*EI(t)/(h^<span class=hljs-number >2</span>)+c₂*GA(t))
+a₃(t,(v,θ),(w,ψ)) = ∫( (EI(t)-τᵥ(t)*GA(t)^<span class=hljs-number >2</span>)*(∇(θ)⊙∇(ψ)) + GA(t)*(<span class=hljs-number >1</span>-τθ(t)*GA(t))*((∇(v)-θ)⋅(∇(w)-ψ)) )dΩ
+op₃(t) = AffineFEOperator((x,y)-&gt;a₃(t,x,y),l,Xₕ,Yₕ)
+v_rel₃ = <span class=hljs-built_in >Float64</span>[]
+<span class=hljs-keyword >for</span> tᵢ <span class=hljs-keyword >in</span> ts
+  vₕ,θₕ = solve(op₃(tᵢ))
+  push!(v_rel₃,abs(vₕ(xₚ)/vₑ(tᵢ)))
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># Plot results with stabilized formulation</span>
+plot!(plt,ts,v_rel₃,marker=:utriangle,label=<span class=hljs-string >&quot;Stabilized&quot;</span>)
+display(plt)
+<span class=hljs-keyword >end</span></code></pre>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Oriol Colomés. Last modified: January 16, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Oriol Colomés. Last modified: January 17, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
