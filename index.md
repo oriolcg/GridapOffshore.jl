@@ -49,6 +49,7 @@ The tutorials in this library are not covering all the features of Gridap. If yo
 1. [~~~<b>Solving PDEs with Gridap.jl</b>~~~](./Theory/tutorial_1/intro_FE_1D)
 1. [~~~<b>Solving the Euler-Bernoulli equation with Continuous/Discontinuos FEs</b>~~~](./Theory/tutorial_EulerBernoulli/euler_bernoulli)
 1. [~~~<b>Solving the Timoshenko beam equation: approaches to avoid shear locking</b>~~~](./Theory/tutorial_Timoshenko/Timoshenko)
+1. [~~~<b>Strong vs weak Dirichlet boundary conditions</b>~~~](./Theory/tutorial_Poisson_weakBCs/Poisson_weakBC)
 
 # MSc Thesis tutorials
 
